@@ -30,4 +30,3 @@ Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows 
 ## Limitations
 
 - Currently MaterialPropertyBlock uses identifier (as string) to set values and in the case where one renderer has multiple materials with the same indetifier, then every one of them will be modified when setting value (for example, if one renderer has 2 submeshes, so requires 2 materials and both of them are the same material, by changing one's value from UnifiedRenderer will cause change in another)
-- Currently you are not able to dynamicly add 
