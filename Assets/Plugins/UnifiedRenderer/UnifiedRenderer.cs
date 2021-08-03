@@ -149,9 +149,7 @@ namespace Unify.UnifiedRenderer {
 						_propBlock.SetTexture(internalName, propertyData.textureValue);
 					}
 					else {
-						if (_propBlock.HasTexture(internalName)) {
-							_propBlock.Clear();
-						}
+						_propBlock.Clear();
 					}
 				}
 				if (propertyData.GetValueType == typeof(bool))

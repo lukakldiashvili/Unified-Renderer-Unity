@@ -15,7 +15,10 @@ namespace Unify.UnifiedRenderer {
 	public class MaterialPropertyData {
 		#if UNITY_EDITOR
 		public static List<MaterialProperty.PropType> SupportedTypes = new List<MaterialProperty.PropType>() {
-			MaterialProperty.PropType.Color, MaterialProperty.PropType.Int, MaterialProperty.PropType.Float,
+			#if UNITY_2021
+			MaterialProperty.PropType.Int,
+			#endif
+			MaterialProperty.PropType.Color, MaterialProperty.PropType.Float,
 			MaterialProperty.PropType.Range, MaterialProperty.PropType.Vector, MaterialProperty.PropType.Texture
 		};
 		#endif

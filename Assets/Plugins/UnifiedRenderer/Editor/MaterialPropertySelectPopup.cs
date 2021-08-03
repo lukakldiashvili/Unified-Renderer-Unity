@@ -93,8 +93,10 @@ namespace Unify.UnifiedRenderer.Editor {
 
 				var type = prop.type;
 
-				if (type == MaterialProperty.PropType.Color)   newData.UpdateValue(prop.colorValue);
+				#if UNITY_2021
 				if (type == MaterialProperty.PropType.Int)     newData.UpdateValue(prop.intValue);
+				#endif
+				if (type == MaterialProperty.PropType.Color)   newData.UpdateValue(prop.colorValue);
 				if (type == MaterialProperty.PropType.Vector)  newData.UpdateValue(prop.vectorValue);
 				if (type == MaterialProperty.PropType.Texture) newData.UpdateValue(prop.textureValue, typeof(Texture));
 				if (type == MaterialProperty.PropType.Float ||
