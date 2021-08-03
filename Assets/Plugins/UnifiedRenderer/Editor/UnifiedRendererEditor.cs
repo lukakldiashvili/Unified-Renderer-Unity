@@ -92,12 +92,22 @@ namespace Unify.UnifiedRenderer.Editor {
 					data.boolValue = EditorGUILayout.Toggle(data.GetNameWithType, data.boolValue);
 				if (data.GetValueType == typeof(Vector4))
 					data.vectorValue = EditorGUILayout.Vector4Field(data.GetNameWithType, data.vectorValue);
-				if (data.GetValueType == typeof(Texture2D) || data.GetValueType == typeof(Texture) || data.GetValueType == typeof(Texture3D))
-					data.textureValue = (Texture) EditorGUILayout.ObjectField(data.GetNameWithType, data.textureValue, typeof(Texture));
+				if (data.GetValueType == typeof(Texture)) {
+					var valueAssigned = EditorGUILayout.ObjectField(data.GetNameWithType, data.textureValue, typeof(Texture),
+						false);
+					
+					if (valueAssigned != null) 
+						data.textureValue = (Texture) valueAssigned;
+					else
+						data.textureValue = null;
+				}
 
 				GUI.backgroundColor = Color.white;
 
-				DrawMiniButton(() => { uniRend.RemoveProperty(data); });
+				DrawMiniButton(() => {
+					uniRend.RemoveProperty(data);
+					uniRend.ClearPropertyBlock();
+				});
 
 				EditorGUILayout.EndHorizontal();
 			}

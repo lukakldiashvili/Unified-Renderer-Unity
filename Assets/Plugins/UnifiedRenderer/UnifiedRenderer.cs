@@ -58,8 +58,8 @@ namespace Unify.UnifiedRenderer {
 			}
 			
 			foreach (var propertyData in GetMaterialProperties) {
-				if ((nameType == MaterialPropertyNameType.DISPLAY  && propertyData.displayName  == identifier) ||
-				    (nameType == MaterialPropertyNameType.INTERNAL && propertyData.internalName == identifier)) {
+				if ((nameType == MaterialPropertyNameType.DISPLAY  && propertyData.GetDisplayName  == identifier) ||
+				    (nameType == MaterialPropertyNameType.INTERNAL && propertyData.GetInternalName == identifier)) {
 					try {
 						var result = propertyData.UpdateValue(value);
 
@@ -134,26 +134,28 @@ namespace Unify.UnifiedRenderer {
 			}
 
 			foreach (var propertyData in materialProperties) {
+				var internalName = propertyData.GetInternalName;
+				
 				if (propertyData.GetValueType == typeof(int))
-					_propBlock.SetColor(propertyData.internalName, propertyData.colorValue);
+					_propBlock.SetColor(internalName, propertyData.colorValue);
 				if (propertyData.GetValueType == typeof(float))
-					_propBlock.SetFloat(propertyData.internalName, propertyData.floatValue);
+					_propBlock.SetFloat(internalName, propertyData.floatValue);
 				if (propertyData.GetValueType == typeof(Color))
-					_propBlock.SetColor(propertyData.internalName, propertyData.colorValue);
+					_propBlock.SetColor(internalName, propertyData.colorValue);
 				if (propertyData.GetValueType == typeof(Vector4))
-					_propBlock.SetVector(propertyData.internalName, propertyData.vectorValue);
-				if (propertyData.GetValueType == typeof(Texture) || propertyData.GetValueType == typeof(Texture2D) || propertyData.GetValueType == typeof(Texture3D)) {
+					_propBlock.SetVector(internalName, propertyData.vectorValue);
+				if (propertyData.GetValueType == typeof(Texture)) {
 					if (propertyData.textureValue != null) {
-						_propBlock.SetTexture(propertyData.internalName, propertyData.textureValue);
+						_propBlock.SetTexture(internalName, propertyData.textureValue);
 					}
 					else {
-						if (_propBlock.HasTexture(propertyData.internalName)) {
+						if (_propBlock.HasTexture(internalName)) {
 							_propBlock.Clear();
 						}
 					}
 				}
 				if (propertyData.GetValueType == typeof(bool))
-					_propBlock.SetFloat(propertyData.internalName, propertyData.boolValue ? 1 : 0);
+					_propBlock.SetFloat(internalName, propertyData.boolValue ? 1 : 0);
 			}
 
 			GetRenderer.SetPropertyBlock(_propBlock);
@@ -162,8 +164,8 @@ namespace Unify.UnifiedRenderer {
 		private MaterialPropertyData FindDataWithIdentifier(string identifier,
 		                                                    MaterialPropertyNameType nameType) {
 			foreach (var propertyData in GetMaterialProperties) {
-				if ((nameType == MaterialPropertyNameType.DISPLAY  && propertyData.displayName  == identifier) ||
-				    (nameType == MaterialPropertyNameType.INTERNAL && propertyData.internalName == identifier)) {
+				if ((nameType == MaterialPropertyNameType.DISPLAY  && propertyData.GetDisplayName  == identifier) ||
+				    (nameType == MaterialPropertyNameType.INTERNAL && propertyData.GetInternalName == identifier)) {
 					return propertyData;
 				}
 			}

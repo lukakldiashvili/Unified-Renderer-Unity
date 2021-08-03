@@ -51,7 +51,7 @@ namespace Unify.UnifiedRenderer.Serializables {
 	
 	[Serializable]
 	public class SerializableTexture {
-		public Texture GetTexture => (Texture) textureObject;
+		public Texture GetTexture => textureObject == null ? null : (Texture) textureObject;
 
 		public Object textureObject;
 

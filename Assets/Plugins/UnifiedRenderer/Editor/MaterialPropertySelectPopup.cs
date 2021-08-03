@@ -96,23 +96,11 @@ namespace Unify.UnifiedRenderer.Editor {
 				if (type == MaterialProperty.PropType.Color)   newData.UpdateValue(prop.colorValue);
 				if (type == MaterialProperty.PropType.Int)     newData.UpdateValue(prop.intValue);
 				if (type == MaterialProperty.PropType.Vector)  newData.UpdateValue(prop.vectorValue);
-				if (type == MaterialProperty.PropType.Texture) newData.UpdateValue((Texture2D) prop.textureValue);
+				if (type == MaterialProperty.PropType.Texture) newData.UpdateValue(prop.textureValue, typeof(Texture));
 				if (type == MaterialProperty.PropType.Float ||
 				    type == MaterialProperty.PropType.Range)   newData.UpdateValue(prop.floatValue);
-
-				// if (!newData.HasEmptyValue) {
-				// 	if (!_targetRend.ContainsProperty(newData)) {
-				// 		_targetRend.AddNewProperty(newData);
-				// 	}
-				// 	else {
-				// 		EditorUtility.DisplayDialog("Error adding property",
-				// 			"Selected property is already added to the list", "Got It!");
-				// 	}
-				// }
-				// else {
-				// 	EditorUtility.DisplayDialog("Error adding property", "Selected property's type is not supported",
-				// 		"Got It!");
-				// }
+				
+				
 				if (!_targetRend.ContainsProperty(newData)) {
 					_targetRend.AddNewProperty(newData);
 				}

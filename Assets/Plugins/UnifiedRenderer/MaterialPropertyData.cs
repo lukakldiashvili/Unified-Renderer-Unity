@@ -20,17 +20,26 @@ namespace Unify.UnifiedRenderer {
 		};
 		#endif
 
-		public string displayName;
-		public string internalName;
-		public string materialName;
-		public string typeName;
+		[SerializeField] private string displayName;
+		[SerializeField] private string internalName;
+		[SerializeField] private string materialName;
+		[SerializeField] private string typeName;
 
-		public int intValue;
-		public bool boolValue;
-		public float floatValue;
-		public SerializableColor _colorValue;
-		public SerializableVector _vectorValue;
-		public SerializableTexture _textureValue;
+		[SerializeField] public int intValue;
+		[SerializeField] public bool boolValue;
+		[SerializeField] public float floatValue;
+		
+		[SerializeField] private SerializableColor _colorValue;
+		[SerializeField] private SerializableVector _vectorValue;
+		[SerializeField] private SerializableTexture _textureValue;
+		
+		//Accessors
+		
+		public string GetDisplayName => displayName;
+		public string GetMaterialName => materialName;
+		public string GetInternalName => internalName;
+		public string GetTypeName => typeName;
+
 
 		public Color colorValue {
 			get => _colorValue.GetColor;
@@ -46,6 +55,7 @@ namespace Unify.UnifiedRenderer {
 			get => _textureValue.GetTexture;
 			set => _textureValue = new SerializableTexture(value);
 		}
+		
 
 		public string GetNameWithType => $"{GetNameForDisplay} ({GetValueType.Name})";
 		public string GetNameForDisplay => $"{(UnifiedRenderer.UseDisplayPropertyName ? displayName : internalName)}";
@@ -58,7 +68,7 @@ namespace Unify.UnifiedRenderer {
 				if (GetValueType == typeof(float)) return floatValue;
 				if (GetValueType == typeof(Color)) return colorValue;
 				if (GetValueType == typeof(Vector4)) return vectorValue;
-				if (GetValueType == typeof(Texture2D)) return textureValue;
+				if (GetValueType == typeof(Texture)) return textureValue;
 				if (GetValueType == typeof(bool)) return boolValue;
 
 				return null;
@@ -68,25 +78,26 @@ namespace Unify.UnifiedRenderer {
 		// public bool HasEmptyValue => hasEmptyValue || typeName == String.Empty;
 
 		public MaterialPropertyData(string mDisplayName, string mInternalName, string mMaterialName, object mValue) {
-			displayName   = mDisplayName;
-			internalName  = mInternalName;
-			materialName  = mMaterialName;
+			displayName  = mDisplayName;
+			internalName = mInternalName;
+			materialName = mMaterialName;
 
 			if (mValue != null) {
 				UpdateValue(mValue);
 			}
 		}
 
-		public bool UpdateValue(object mValue) {
-			var valueType = mValue.GetType();
-			typeName = valueType.FullName;
+		public bool UpdateValue(object mValue, Type typeOverride = null) {
+			if (typeOverride == null) typeOverride = mValue.GetType();
 
-			if (mValue is int intVal) intValue                  = intVal;
-			else if (mValue is float floatVal) floatValue       = floatVal;
-			else if (mValue is Color colorVal) colorValue       = colorVal;
-			else if (mValue is Vector4 vectorVal) vectorValue   = vectorVal;
-			else if (mValue is bool boolVal) boolValue          = boolVal;
-			else if (mValue is Texture textureVal && textureVal != null) textureValue = textureVal;
+			typeName = typeOverride.FullName;
+
+			if (mValue is int intVal) intValue                     = intVal;
+			else if (mValue is float floatVal) floatValue          = floatVal;
+			else if (mValue is Color colorVal) colorValue          = colorVal;
+			else if (mValue is Vector4 vectorVal) vectorValue      = vectorVal;
+			else if (mValue is bool boolVal) boolValue             = boolVal;
+			else if (typeOverride == typeof(Texture)) textureValue = (Texture) mValue;
 			else {
 				Debug.LogError("Unified Renderer: Unsupported type detected!");
 				return false;

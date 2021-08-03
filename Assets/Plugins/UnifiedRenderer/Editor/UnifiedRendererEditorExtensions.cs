@@ -30,7 +30,7 @@ namespace Unify.UnifiedRenderer.Editor {
 		public static bool IsPropertyApplicable(this UnifiedRenderer rend, MaterialPropertyData data) {
 			foreach (var material in rend.GetRenderer.sharedMaterials) {
 				foreach (var prop in material.GetProperties()) {
-					if (prop.name == data.internalName) {
+					if (prop.name == data.GetInternalName) {
 						return true;
 					}
 				}
