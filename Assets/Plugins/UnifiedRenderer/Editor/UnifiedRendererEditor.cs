@@ -1,5 +1,4 @@
 using System;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,15 +30,6 @@ namespace Unify.UnifiedRenderer.Editor {
 				
 				Unify.UnifiedRenderer.UnifiedRendererEditorExtensions.DrawSerializedObject(serializedMeshRend);
 			}
-			
-			// var textureResult = (Texture2D) EditorGUILayout.ObjectField("Texture", refrence, typeof(Texture2D));
-			//
-			// if (textureResult != null) {
-			// 	var serialized = textureResult.Serialize();
-			// 	Debug.Log(serialized);
-			// 	
-			// 	refrence = (Texture2D) Serialization.Deserialize(serialized);
-			// }
 
 			DrawHead(serializedMeshRend);
 
@@ -89,7 +79,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 				if (!uniRend.IsPropertyApplicable(data)) {
 					// DrawMiniButton(()=>{});
-					GUI.contentColor = Color.red;
+					GUI.backgroundColor = Color.red;
 				}
 
 				if (data.GetValueType == typeof(int))
@@ -105,7 +95,7 @@ namespace Unify.UnifiedRenderer.Editor {
 				if (data.GetValueType == typeof(Texture2D) || data.GetValueType == typeof(Texture) || data.GetValueType == typeof(Texture3D))
 					data.textureValue = (Texture) EditorGUILayout.ObjectField(data.GetNameWithType, data.textureValue, typeof(Texture));
 
-				GUI.contentColor = Color.white;
+				GUI.backgroundColor = Color.white;
 
 				DrawMiniButton(() => { uniRend.RemoveProperty(data); });
 

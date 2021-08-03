@@ -704,10 +704,42 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1500088598}
     m_Modifications:
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[2].typeName
+      value: System.Single
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[2].floatValue
+      value: 1.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[2].displayName
+      value: Queue offset
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[2].internalName
+      value: _QueueOffset
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[2].materialName
+      value: DemoBallMat
+      objectReference: {fileID: 0}
     - target: {fileID: 5764928980167903297, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: m_Name
       value: DemoBall (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5764928980167903298, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5764928980167903298, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0ffaa0b7117ba8c47a9d05ae701d4b4d, type: 2}
     - target: {fileID: 5764928980167903308, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -2382,15 +2414,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1].typeName
-      value: UnityEngine.Color
+      value: UnityEngine.Texture
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1].displayName
-      value: Base Color
+      value: Albedo
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[0].internalName
@@ -2398,7 +2430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1].internalName
-      value: _Color
+      value: _BaseMap
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1].materialName
@@ -2418,20 +2450,40 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1]._colorValue.a
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1]._colorValue.b
-      value: 0.28751338
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1]._colorValue.g
-      value: 0.60367894
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: materialProperties.Array.data[1]._colorValue.r
-      value: 0.8584906
+      value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[1].hasEmptyValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[1]._textureValue.data._json
+      value: '{"$content":0,"$type":"UnityEngine.Object"}'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[1]._textureValue.textureObject
+      value: 
+      objectReference: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[1]._textureValue.data._objectReferences.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
+      propertyPath: materialProperties.Array.data[1]._textureValue.data._objectReferences.Array.data[0]
+      value: 
+      objectReference: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 5764928980167903297, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: m_Name
       value: DemoBall

@@ -93,12 +93,12 @@ namespace Unify.UnifiedRenderer.Editor {
 
 				var type = prop.type;
 
-				if (type == MaterialProperty.PropType.Color) newData.UpdateValue(prop.colorValue);
-				if (type == MaterialProperty.PropType.Int) newData.UpdateValue(prop.intValue);
-				if (type == MaterialProperty.PropType.Float) newData.UpdateValue(prop.floatValue);
-				if (type == MaterialProperty.PropType.Range) newData.UpdateValue(prop.floatValue);
-				if (type == MaterialProperty.PropType.Vector) newData.UpdateValue(prop.vectorValue);
-				if (type == MaterialProperty.PropType.Texture) newData.UpdateTextureValue((Texture2D) prop.textureValue);
+				if (type == MaterialProperty.PropType.Color)   newData.UpdateValue(prop.colorValue);
+				if (type == MaterialProperty.PropType.Int)     newData.UpdateValue(prop.intValue);
+				if (type == MaterialProperty.PropType.Vector)  newData.UpdateValue(prop.vectorValue);
+				if (type == MaterialProperty.PropType.Texture) newData.UpdateValue((Texture2D) prop.textureValue);
+				if (type == MaterialProperty.PropType.Float ||
+				    type == MaterialProperty.PropType.Range)   newData.UpdateValue(prop.floatValue);
 
 				// if (!newData.HasEmptyValue) {
 				// 	if (!_targetRend.ContainsProperty(newData)) {

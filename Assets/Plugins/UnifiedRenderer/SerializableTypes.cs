@@ -1,6 +1,6 @@
 ﻿using System;
-using Unity.VisualScripting;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Unify.UnifiedRenderer.Serializables {
 	[Serializable]
@@ -51,12 +51,13 @@ namespace Unify.UnifiedRenderer.Serializables {
 	
 	[Serializable]
 	public class SerializableTexture {
-		public SerializationData data;
-		public Texture GetTexture => (Texture) Serialization.Deserialize(data);
+		public Texture GetTexture => (Texture) textureObject;
+
+		public Object textureObject;
 
 		public Texture SetTexture {
 			set {
-				data = value.Serialize();
+				textureObject = value;
 			}
 		}
 
