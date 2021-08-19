@@ -10,9 +10,10 @@ Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows 
 
 ## Features
 
-- Not dependent on any SRP, so it is compatible with every of them
+- Not dependent on any SRP, so it is compatible with every one of them
 - Set and Get float/int, color, vector and texture values per renderer
 - Option to display renderer's and mesh filter's inspectors in one place, unified renderer component and hide others' contents
+- Supports multiple materials (even the same instance) on single object
 
 ## Examples
 
@@ -26,7 +27,3 @@ Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows 
 - Add Unified Renderer component to object with supported renderer attached
 - Add property you want to modify from the component
 - Edit/View values from the inspector of from the scripts
-
-## Limitations
-
-- Currently MaterialPropertyBlock uses identifier (as string) to set values and in the case where one renderer has multiple materials with the same indetifier, then every one of them will be modified when setting value (for example, if one renderer has 2 submeshes, so requires 2 materials and both of them are the same material, by changing one's value from UnifiedRenderer will cause change in another)
