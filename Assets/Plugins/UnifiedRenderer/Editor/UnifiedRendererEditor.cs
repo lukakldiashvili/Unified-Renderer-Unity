@@ -75,25 +75,22 @@ namespace Unify.UnifiedRenderer.Editor {
 			for (int i = 0; i < uniRend.GetMaterialProperties.Count; i++) {
 				var data = uniRend.GetMaterialProperties[i];
 
-				EditorGUILayout.BeginHorizontal();
+				var horRect = EditorGUILayout.BeginHorizontal();
 
-				if (!uniRend.IsPropertyApplicable(data)) {
-					// DrawMiniButton(()=>{});
-					GUI.backgroundColor = Color.red;
-				}
-
+				var fieldName = $"{data.GetNameForDisplay} (Mat ID: {data.GetMaterialID})";
+				
 				if (data.GetValueType == typeof(int))
-					data.intValue = EditorGUILayout.IntField(data.GetNameWithType, data.intValue);
+					data.intValue = EditorGUILayout.IntField(fieldName, data.intValue);
 				if (data.GetValueType == typeof(float))
-					data.floatValue = EditorGUILayout.FloatField(data.GetNameWithType, data.floatValue);
+					data.floatValue = EditorGUILayout.FloatField(fieldName, data.floatValue);
 				if (data.GetValueType == typeof(Color))
-					data.colorValue = EditorGUILayout.ColorField(data.GetNameWithType, data.colorValue);
+					data.colorValue = EditorGUILayout.ColorField(fieldName, data.colorValue);
 				if (data.GetValueType == typeof(bool))
-					data.boolValue = EditorGUILayout.Toggle(data.GetNameWithType, data.boolValue);
+					data.boolValue = EditorGUILayout.Toggle(fieldName, data.boolValue);
 				if (data.GetValueType == typeof(Vector4))
-					data.vectorValue = EditorGUILayout.Vector4Field(data.GetNameWithType, data.vectorValue);
+					data.vectorValue = EditorGUILayout.Vector4Field(fieldName, data.vectorValue);
 				if (data.GetValueType == typeof(Texture)) {
-					var valueAssigned = EditorGUILayout.ObjectField(data.GetNameWithType, data.textureValue, typeof(Texture),
+					var valueAssigned = EditorGUILayout.ObjectField(fieldName, data.textureValue, typeof(Texture),
 						false);
 					
 					if (valueAssigned != null) 
@@ -102,14 +99,19 @@ namespace Unify.UnifiedRenderer.Editor {
 						data.textureValue = null;
 				}
 
-				GUI.backgroundColor = Color.white;
-
 				DrawMiniButton(() => {
 					uniRend.RemoveProperty(data);
 					uniRend.ClearPropertyBlock();
 				});
 
 				EditorGUILayout.EndHorizontal();
+				
+				var backgroundRedRect = new Rect(horRect.x - 13, horRect.y, EditorGUIUtility.currentViewWidth, horRect.height);
+				
+				if (!uniRend.IsPropertyApplicable(data)) {
+					// DrawMiniButton(()=>{});
+					EditorGUI.DrawRect(backgroundRedRect, new Color(1f,0,0,0.2f));
+				}
 			}
 		}
 
@@ -119,7 +121,6 @@ namespace Unify.UnifiedRenderer.Editor {
 
 			EditorGUILayout.BeginHorizontal();
 			if (GUILayout.Button("Add Property")) {
-				
 				PopupWindow.Show(new Rect(Event.current.mousePosition, Vector2.zero),
 					new MaterialPropertySelectPopup(uniRend, uniRend.GetRenderer.sharedMaterials));
 			}

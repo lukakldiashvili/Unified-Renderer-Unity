@@ -34,7 +34,10 @@ namespace Unify.UnifiedRenderer.Editor {
 		public MaterialPropertySelectPopup(UnifiedRenderer targetRend, Material[] mats) {
 			_targetRend      = targetRend;
 			_materials       = mats;
-			_materialOptions = (from mat in _materials select mat.name).ToArray();
+
+			int matCount = 0;
+			
+			_materialOptions = (from mat in _materials select $"{mat.name} ({matCount++})").ToArray();
 		}
 
 		public override Vector2 GetWindowSize() {
@@ -88,7 +91,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 				var prop = _properties[_selectedProperty];
 
-				var newData = new MaterialPropertyData(prop.displayName, prop.name, _materials[_selectedMaterial].name,
+				var newData = new MaterialPropertyData(prop.displayName, prop.name, _materials[_selectedMaterial].name, _selectedMaterial,
 					null);
 
 				var type = prop.type;

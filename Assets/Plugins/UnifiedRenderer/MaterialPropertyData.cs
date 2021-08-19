@@ -27,6 +27,7 @@ namespace Unify.UnifiedRenderer {
 		[SerializeField] private string internalName;
 		[SerializeField] private string materialName;
 		[SerializeField] private string typeName;
+		[SerializeField] private int materialId;
 
 		[SerializeField] public int intValue;
 		[SerializeField] public bool boolValue;
@@ -42,6 +43,7 @@ namespace Unify.UnifiedRenderer {
 		public string GetMaterialName => materialName;
 		public string GetInternalName => internalName;
 		public string GetTypeName => typeName;
+		public int GetMaterialID => materialId;
 
 
 		public Color colorValue {
@@ -59,8 +61,6 @@ namespace Unify.UnifiedRenderer {
 			set => _textureValue = new SerializableTexture(value);
 		}
 		
-
-		public string GetNameWithType => $"{GetNameForDisplay} ({GetValueType.Name})";
 		public string GetNameForDisplay => $"{(UnifiedRenderer.UseDisplayPropertyName ? displayName : internalName)}";
 
 		public Type GetValueType => Type.GetType(typeName) ?? Type.GetType(typeName + ", UnityEngine.CoreModule", true);
@@ -80,10 +80,11 @@ namespace Unify.UnifiedRenderer {
 
 		// public bool HasEmptyValue => hasEmptyValue || typeName == String.Empty;
 
-		public MaterialPropertyData(string mDisplayName, string mInternalName, string mMaterialName, object mValue) {
+		public MaterialPropertyData(string mDisplayName, string mInternalName, string mMaterialName, int mMaterialId, object mValue) {
 			displayName  = mDisplayName;
 			internalName = mInternalName;
 			materialName = mMaterialName;
+			materialId   = mMaterialId;
 
 			if (mValue != null) {
 				UpdateValue(mValue);
@@ -110,7 +111,7 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		public bool Equals(MaterialPropertyData data) {
-			return data.internalName == internalName && data.materialName == materialName;
+			return (data.internalName == internalName && data.materialName == materialName) && data.materialId == materialId;
 		}
 
 		public static bool operator ==(MaterialPropertyData lhs, MaterialPropertyData rhs) {

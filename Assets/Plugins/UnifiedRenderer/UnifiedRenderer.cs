@@ -37,7 +37,10 @@ namespace Unify.UnifiedRenderer {
 		[SerializeField]
 		private List<MaterialPropertyData> materialProperties = new List<MaterialPropertyData>();
 
-		private MaterialPropertyBlock _propBlock;
+		private List<MaterialPropertyBlock> propertyBlocks = new List<MaterialPropertyBlock>();
+
+		private int GetMaterialCount => GetRenderer.sharedMaterials.Length;
+
 
 		private void OnEnable() {
 			ApplyPropertiesToBlock();
@@ -49,17 +52,13 @@ namespace Unify.UnifiedRenderer {
 			#endif
 		}
 
-		public bool SetMaterialProperty(string identifier, object value,
+		public bool SetMaterialProperty(string identifier, object value, int materialIndex = 0,
 		                                MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO,
 		                                bool immediateApply = true) {
-			if (nameType == MaterialPropertyNameType.AUTO) {
-				nameType = UseDisplayPropertyName
-					? MaterialPropertyNameType.DISPLAY : MaterialPropertyNameType.INTERNAL;
-			}
+
 			
 			foreach (var propertyData in GetMaterialProperties) {
-				if ((nameType == MaterialPropertyNameType.DISPLAY  && propertyData.GetDisplayName  == identifier) ||
-				    (nameType == MaterialPropertyNameType.INTERNAL && propertyData.GetInternalName == identifier)) {
+				if (propertyData.GetNameWithType(nameType) == identifier && propertyData.GetMaterialID == materialIndex) {
 					try {
 						var result = propertyData.UpdateValue(value);
 
@@ -78,8 +77,8 @@ namespace Unify.UnifiedRenderer {
 		#region Property Getters
 		
 		public Color? GetMaterialPropertyColor(string identifier,
-		                                       MaterialPropertyNameType nameType = MaterialPropertyNameType.DISPLAY) {
-			var propertyData = FindDataWithIdentifier(identifier, nameType);
+		                                       MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO) {
+			var propertyData = FindDataWithIdentifier(identifier, nameType.GetDefaultIfAuto());
 			
 			if (!(propertyData is null) && propertyData.GetValueType == typeof(Color)) return propertyData.colorValue;
 
@@ -87,8 +86,8 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		public float? GetMaterialPropertyFloat(string identifier,
-		                                     MaterialPropertyNameType nameType = MaterialPropertyNameType.DISPLAY) {
-			var propertyData = FindDataWithIdentifier(identifier, nameType);
+		                                     MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO) {
+			var propertyData = FindDataWithIdentifier(identifier, nameType.GetDefaultIfAuto());
 			
 			if (!(propertyData is null) && propertyData.GetValueType == typeof(float)) return propertyData.floatValue;
 
@@ -96,8 +95,8 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		public int? GetMaterialPropertyInt(string identifier,
-		                                       MaterialPropertyNameType nameType = MaterialPropertyNameType.DISPLAY) {
-			var propertyData = FindDataWithIdentifier(identifier, nameType);
+		                                       MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO) {
+			var propertyData = FindDataWithIdentifier(identifier, nameType.GetDefaultIfAuto());
 			
 			if (!(propertyData is null) && propertyData.GetValueType == typeof(int)) return propertyData.intValue;
 
@@ -111,8 +110,12 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		public void ApplyPropertiesToBlock() {
-			if (_propBlock == null) {
-				_propBlock = new MaterialPropertyBlock();
+			if (propertyBlocks.Count == 0 || GetMaterialCount != propertyBlocks.Count) {
+				propertyBlocks.Clear();
+
+				for (int i = 0; i < GetMaterialCount; i++) {
+					propertyBlocks.Add(new MaterialPropertyBlock());
+				}
 
 				#if UNITY_EDITOR
 				EditorApplication.playModeStateChanged -= ApplyBlockEditor;
@@ -124,39 +127,50 @@ namespace Unify.UnifiedRenderer {
 		}
 		
 		void ApplyBlock(bool clearBlock = false) {
-			GetRenderer.GetPropertyBlock(_propBlock);
+			for (int i = 0; i < GetMaterialCount; i++) {
+				GetRenderer.GetPropertyBlock(propertyBlocks[i], i);
+			}
 
 			if (clearBlock) {
-				_propBlock.Clear();
-				GetRenderer.SetPropertyBlock(_propBlock);
+				propertyBlocks.Clear();
 				
 				return;
 			}
 
 			foreach (var propertyData in materialProperties) {
 				var internalName = propertyData.GetInternalName;
+				var valueType    = propertyData.GetValueType;
+				var matIndex     = propertyData.GetMaterialID;
 				
-				if (propertyData.GetValueType == typeof(int))
-					_propBlock.SetColor(internalName, propertyData.colorValue);
-				if (propertyData.GetValueType == typeof(float))
-					_propBlock.SetFloat(internalName, propertyData.floatValue);
-				if (propertyData.GetValueType == typeof(Color))
-					_propBlock.SetColor(internalName, propertyData.colorValue);
-				if (propertyData.GetValueType == typeof(Vector4))
-					_propBlock.SetVector(internalName, propertyData.vectorValue);
-				if (propertyData.GetValueType == typeof(Texture)) {
+				if (valueType == typeof(int))
+					propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
+				if (valueType == typeof(float))
+					propertyBlocks[matIndex].SetFloat(internalName, propertyData.floatValue);
+				if (valueType == typeof(Color))
+					propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
+				if (valueType == typeof(Vector4))
+					propertyBlocks[matIndex].SetVector(internalName, propertyData.vectorValue);
+				if (valueType == typeof(Texture)) {
 					if (propertyData.textureValue != null) {
-						_propBlock.SetTexture(internalName, propertyData.textureValue);
+						propertyBlocks[matIndex].SetTexture(internalName, propertyData.textureValue);
 					}
 					else {
-						_propBlock.Clear();
+						propertyBlocks.Clear();
 					}
 				}
-				if (propertyData.GetValueType == typeof(bool))
-					_propBlock.SetFloat(internalName, propertyData.boolValue ? 1 : 0);
+				if (valueType == typeof(bool))
+					propertyBlocks[matIndex].SetFloat(internalName, propertyData.boolValue ? 1 : 0);
 			}
+			
+			SetAllBlocks();
+		}
 
-			GetRenderer.SetPropertyBlock(_propBlock);
+		private void SetAllBlocks() {
+			for (int i = 0; i < GetMaterialCount; i++) {
+				// Debug.Log(propertyBlocks[i].isEmpty);
+				
+				GetRenderer.SetPropertyBlock(propertyBlocks[i], i);
+			}
 		}
 
 		private MaterialPropertyData FindDataWithIdentifier(string identifier,
