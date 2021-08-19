@@ -110,6 +110,10 @@ namespace Unify.UnifiedRenderer {
 			return true;
 		}
 
+		public void UpdateMaterialID(int id) {
+			materialId = id;
+		}
+
 		public bool Equals(MaterialPropertyData data) {
 			return (data.internalName == internalName && data.materialName == materialName) && data.materialId == materialId;
 		}

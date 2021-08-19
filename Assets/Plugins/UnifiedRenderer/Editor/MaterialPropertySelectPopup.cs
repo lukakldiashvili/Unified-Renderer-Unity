@@ -123,4 +123,63 @@ namespace Unify.UnifiedRenderer.Editor {
 			}
 		}
 	}
+	
+	public class MaterialIndexChangePopup : PopupWindowContent {
+		private readonly MaterialPropertyData _targetData;
+		
+		private readonly Material[] _materials;
+		private string[] _materialOptions;
+		private int _selectedMaterial = -1;
+		
+
+		private bool _setupComplete = false;
+
+		public MaterialIndexChangePopup(MaterialPropertyData data, Material[] mats) {
+			_targetData = data;
+			_materials  = mats;
+			
+			int matCount = 0;
+			
+			_materialOptions = (from mat in _materials select $"{mat.name} ({matCount++})").ToArray();
+		}
+
+		public override Vector2 GetWindowSize() {
+			return new Vector2(350, 60);
+		}
+
+		public override void OnGUI(Rect rect) {
+			GUILayout.Label("Update Material Index", EditorStyles.boldLabel);
+
+			_selectedMaterial = EditorGUILayout.Popup("Select Material", _selectedMaterial, _materialOptions);
+
+			if (_selectedMaterial != -1) {
+				if (GUILayout.Button("Update Material Index")) {
+					FinishReference();
+				}
+			}
+		}
+
+		public override void OnOpen() {
+			// Popup opened
+		}
+
+		public override void OnClose() {
+			FinishReference(true);
+		}
+
+		void FinishReference(bool isOnClose = false) {
+			if (_setupComplete) {
+				return;
+			}
+
+			if (_selectedMaterial != -1 && !isOnClose) {
+				// EditorUtility.SetDirty(_targetProp.GetGameObject);
+				_setupComplete = true;
+				
+				_targetData.UpdateMaterialID(_selectedMaterial);
+				
+				editorWindow.Close();
+			}
+		}
+	}
 }
