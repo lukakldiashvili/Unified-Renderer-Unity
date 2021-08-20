@@ -126,14 +126,18 @@ namespace Unify.UnifiedRenderer {
 			ApplyBlock();
 		}
 		
-		void ApplyBlock(bool clearBlock = false) {
-			for (int i = 0; i < GetMaterialCount; i++) {
-				GetRenderer.GetPropertyBlock(propertyBlocks[i], i);
+		void ApplyBlock(bool clearBlock = false, bool getBlocksFirst = false) {
+			if (getBlocksFirst) {
+				for (int i = 0; i < GetMaterialCount; i++) {
+					GetRenderer.GetPropertyBlock(propertyBlocks[i], i);
+				}
 			}
 
 			if (clearBlock) {
-				propertyBlocks.Clear();
-				
+				foreach (var propertyBlock in propertyBlocks) {
+					propertyBlock.Clear();
+				}
+
 				return;
 			}
 
@@ -155,7 +159,7 @@ namespace Unify.UnifiedRenderer {
 						propertyBlocks[matIndex].SetTexture(internalName, propertyData.textureValue);
 					}
 					else {
-						propertyBlocks.Clear();
+						propertyBlocks[matIndex].Clear();
 					}
 				}
 				if (valueType == typeof(bool))
@@ -167,8 +171,6 @@ namespace Unify.UnifiedRenderer {
 
 		private void SetAllBlocks() {
 			for (int i = 0; i < GetMaterialCount; i++) {
-				// Debug.Log(propertyBlocks[i].isEmpty);
-				
 				GetRenderer.SetPropertyBlock(propertyBlocks[i], i);
 			}
 		}
