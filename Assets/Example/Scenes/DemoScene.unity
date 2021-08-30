@@ -2251,34 +2251,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1500088598}
     m_Modifications:
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[0].materialId
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[0]._colorValue.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[0]._colorValue.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[0]._colorValue.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[2]._colorValue.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[2]._colorValue.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4958553662299600926, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
-      propertyPath: materialProperties.Array.data[2]._colorValue.r
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5764928980167903297, guid: 90876cc54499c7f418aefaed4ad6d039, type: 3}
       propertyPath: m_Name
       value: DemoBall

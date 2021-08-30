@@ -42,7 +42,7 @@ namespace Unify.UnifiedRenderer.Editor {
 			if (showRendererAndFilter) {
 				if (unifiedRend.GetMeshFilter != null) {
 					var serializedMeshFilter = new SerializedObject(unifiedRend.GetMeshFilter);
-					Unify.UnifiedRenderer.UnifiedRendererEditorExtensions.DrawSerializedObject(serializedMeshFilter);
+					UnifiedRendererEditorExtensions.DrawSerializedObject(serializedMeshFilter);
 					
 					EditorGUILayout.Space(5);
 				}
@@ -103,7 +103,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 				DrawMiniButton("O", () => {
 					PopupWindow.Show(new Rect(Event.current.mousePosition, Vector2.zero),
-						new MaterialIndexChangePopup(data, uniRend.GetRenderer.sharedMaterials));
+						new MaterialIndexChangePopup(uniRend ,data, uniRend.GetRenderer.sharedMaterials));
 				});
 				
 				DrawMiniButton("X", () => {

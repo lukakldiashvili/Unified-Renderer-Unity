@@ -105,11 +105,7 @@ namespace Unify.UnifiedRenderer {
 		
 		#endregion
 
-		public void ClearPropertyBlock() {
-			ApplyBlock(true);
-		}
-
-		public void ApplyPropertiesToBlock() {
+		void UpdateListMembers() {
 			if (propertyBlocks.Count == 0 || GetMaterialCount != propertyBlocks.Count) {
 				propertyBlocks.Clear();
 
@@ -122,23 +118,26 @@ namespace Unify.UnifiedRenderer {
 				EditorApplication.playModeStateChanged += ApplyBlockEditor;
 				#endif
 			}
+		}
+		
+		public void ClearPropertyBlock() {
+			UpdateListMembers();
 
+			foreach (var block in propertyBlocks) {
+				block.Clear();
+			}
+		}
+
+		public void ApplyPropertiesToBlock() {
+			UpdateListMembers();
 			ApplyBlock();
 		}
 		
-		void ApplyBlock(bool clearBlock = false, bool getBlocksFirst = false) {
+		void ApplyBlock(bool getBlocksFirst = false) {
 			if (getBlocksFirst) {
 				for (int i = 0; i < GetMaterialCount; i++) {
 					GetRenderer.GetPropertyBlock(propertyBlocks[i], i);
 				}
-			}
-
-			if (clearBlock) {
-				foreach (var propertyBlock in propertyBlocks) {
-					propertyBlock.Clear();
-				}
-
-				return;
 			}
 
 			foreach (var propertyData in materialProperties) {
@@ -167,6 +166,16 @@ namespace Unify.UnifiedRenderer {
 			}
 			
 			SetAllBlocks();
+		}
+
+		public bool ContainsSameIdentifierAndIndex(MaterialPropertyData newData) {
+			int matchCount = 0;
+			
+			foreach (var data in materialProperties) {
+				if (data == newData) matchCount++;
+			}
+
+			return matchCount > 1;
 		}
 
 		private void SetAllBlocks() {

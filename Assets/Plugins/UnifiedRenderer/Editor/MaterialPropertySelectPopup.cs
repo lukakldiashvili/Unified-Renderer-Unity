@@ -125,6 +125,7 @@ namespace Unify.UnifiedRenderer.Editor {
 	}
 	
 	public class MaterialIndexChangePopup : PopupWindowContent {
+		private readonly UnifiedRenderer _targetRend;
 		private readonly MaterialPropertyData _targetData;
 		
 		private readonly Material[] _materials;
@@ -134,9 +135,10 @@ namespace Unify.UnifiedRenderer.Editor {
 
 		private bool _setupComplete = false;
 
-		public MaterialIndexChangePopup(MaterialPropertyData data, Material[] mats) {
+		public MaterialIndexChangePopup(UnifiedRenderer targetRend, MaterialPropertyData data, Material[] mats) {
 			_targetData = data;
 			_materials  = mats;
+			_targetRend = targetRend;
 			
 			int matCount = 0;
 			
@@ -173,10 +175,21 @@ namespace Unify.UnifiedRenderer.Editor {
 			}
 
 			if (_selectedMaterial != -1 && !isOnClose) {
-				// EditorUtility.SetDirty(_targetProp.GetGameObject);
 				_setupComplete = true;
 				
 				_targetData.UpdateMaterialID(_selectedMaterial);
+				_targetRend.ClearPropertyBlock();
+				_targetRend.ApplyPropertiesToBlock();
+				EditorUtility.SetDirty(_targetRend);
+
+				var isDuplicate = _targetRend.ContainsSameIdentifierAndIndex(_targetData);
+
+				if (isDuplicate) {
+					EditorUtility.DisplayDialog("Warning (Duplicate properties detected)",
+						"Property with same name and material index already exists! \n\n" + 
+						$"Identifier - {_targetData.GetNameForDisplay} \nIndex - {_targetData.GetMaterialID}", 
+						"Got It!");
+				}
 				
 				editorWindow.Close();
 			}
