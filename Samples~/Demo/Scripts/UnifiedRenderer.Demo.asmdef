@@ -1,3 +1,16 @@
 {
-	"name": "UnifiedRenderer.Demo"
+    "name": "UnifiedRenderer.Demo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:21e81404fc85b0746980b33e6b59cb1f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
