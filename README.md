@@ -12,6 +12,8 @@ Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows 
 Simply add the following git url in package manager:<br>
 ```https://github.com/lukakldiashvili/Unified-Renderer-Unity.git```<br>
 
+or, download .unitypackage from the latest release
+
 
 ## Features
 
