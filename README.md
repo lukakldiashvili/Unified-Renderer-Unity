@@ -8,6 +8,11 @@ Unified Renderer is simple drop-in plugin for Unity, which simplifies working wi
 Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows to pass different data to each Renderer/object.<br><br>
 <i>By adding Unified Renderer to your project, you keep all of the built-in functionality, this package is just an extra layer which simplifies working with that functionality.</i><br><br>
 
+## How to install
+Simply add the following git url in package manager:<br>
+```https://github.com/lukakldiashvili/Unified-Renderer-Unity.git```<br>
+
+
 ## Features
 
 - Not dependent on any SRP, so it is compatible with every one of them
