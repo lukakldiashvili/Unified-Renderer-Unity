@@ -1,0 +1,18 @@
+{
+    "name": "Unify.UnifiedRenderer.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:21e81404fc85b0746980b33e6b59cb1f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
