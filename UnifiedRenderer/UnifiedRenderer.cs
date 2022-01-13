@@ -179,6 +179,8 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		private void SetAllBlocks() {
+			if (GetMaterialCount != propertyBlocks.Count) return;
+			
 			for (int i = 0; i < GetMaterialCount; i++) {
 				GetRenderer.SetPropertyBlock(propertyBlocks[i], i);
 			}
