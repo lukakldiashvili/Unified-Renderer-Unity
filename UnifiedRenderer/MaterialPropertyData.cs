@@ -71,7 +71,7 @@ namespace Unify.UnifiedRenderer {
 				if (GetValueType == typeof(float)) return floatValue;
 				if (GetValueType == typeof(Color)) return colorValue;
 				if (GetValueType == typeof(Vector4)) return vectorValue;
-				if (GetValueType == typeof(Texture)) return textureValue;
+				if (GetValueType == typeof(Texture) || GetValueType.IsSubclassOf(typeof(Texture))) return textureValue;
 				if (GetValueType == typeof(bool)) return boolValue;
 
 				return null;
@@ -101,7 +101,7 @@ namespace Unify.UnifiedRenderer {
 			else if (mValue is Color colorVal) colorValue          = colorVal;
 			else if (mValue is Vector4 vectorVal) vectorValue      = vectorVal;
 			else if (mValue is bool boolVal) boolValue             = boolVal;
-			else if (typeOverride == typeof(Texture)) textureValue = (Texture) mValue;
+			else if (typeOverride == typeof(Texture) || typeOverride.IsSubclassOf(typeof(Texture))) textureValue = (Texture) mValue;
 			else {
 				Debug.LogError("Unified Renderer: Unsupported type detected!");
 				return false;

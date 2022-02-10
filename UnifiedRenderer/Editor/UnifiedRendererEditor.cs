@@ -91,7 +91,7 @@ namespace Unify.UnifiedRenderer.Editor {
 					data.boolValue = EditorGUILayout.Toggle(fieldName, data.boolValue);
 				if (data.GetValueType == typeof(Vector4))
 					data.vectorValue = EditorGUILayout.Vector4Field(fieldName, data.vectorValue);
-				if (data.GetValueType == typeof(Texture)) {
+				if (data.GetValueType == typeof(Texture) || data.GetValueType.IsSubclassOf(typeof(Texture))) {
 					var valueAssigned = EditorGUILayout.ObjectField(fieldName, data.textureValue, typeof(Texture),
 						false);
 

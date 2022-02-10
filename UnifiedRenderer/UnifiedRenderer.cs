@@ -153,7 +153,7 @@ namespace Unify.UnifiedRenderer {
 					propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
 				if (valueType == typeof(Vector4))
 					propertyBlocks[matIndex].SetVector(internalName, propertyData.vectorValue);
-				if (valueType == typeof(Texture)) {
+				if (valueType == typeof(Texture) || valueType.IsSubclassOf(typeof(Texture))) {
 					if (propertyData.textureValue != null) {
 						propertyBlocks[matIndex].SetTexture(internalName, propertyData.textureValue);
 					}
