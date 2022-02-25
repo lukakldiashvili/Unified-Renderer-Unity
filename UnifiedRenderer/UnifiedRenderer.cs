@@ -18,6 +18,12 @@ namespace Unify.UnifiedRenderer {
 					_renderer = GetComponent<Renderer>();
 				}
 
+				#if UNITY_EDITOR
+				if (_renderer == null) {
+					EditorApplication.playModeStateChanged -= ApplyBlockEditor;
+				}
+				#endif
+
 				return _renderer;
 			}
 		}
