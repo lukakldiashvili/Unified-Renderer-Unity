@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -59,26 +60,23 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		public bool SetMaterialProperty(string identifier, object value, int materialIndex = 0,
-		                                MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO,
-		                                bool immediateApply = true) {
+        		                                MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO,
+        		                                bool immediateApply = true) {
+        	try {
+        		var selectedProp = GetMaterialProperties.First(prop =>
+        			prop.GetNameWithType(nameType) == identifier && prop.GetMaterialID == materialIndex);
+        		
+        		var result = selectedProp.UpdateValue(value);
 
-			
-			foreach (var propertyData in GetMaterialProperties) {
-				if (propertyData.GetNameWithType(nameType) == identifier && propertyData.GetMaterialID == materialIndex) {
-					try {
-						var result = propertyData.UpdateValue(value);
+        		if (immediateApply) ApplyPropertiesToBlock();
+        		return result;
+        	}
+        	catch (Exception e) {
+        		return false;
+        	}
 
-						if (immediateApply) ApplyPropertiesToBlock();
-						return result;
-					}
-					catch (Exception e) {
-						return false;
-					}
-				}
-			}
-
-			return false;
-		}
+        	return false;
+        }
 
 		#region Property Getters
 		
