@@ -63,7 +63,10 @@ namespace Unify.UnifiedRenderer {
 		
 		public string GetNameForDisplay => $"{(UnifiedRenderer.UseDisplayPropertyName ? displayName : internalName)}";
 
-		public Type GetValueType => Type.GetType(typeName) ?? Type.GetType(typeName + ", UnityEngine.CoreModule", true);
+		public Type GetValueType =>
+			_valueType ??= Type.GetType(typeName) ?? Type.GetType(typeName + ", UnityEngine.CoreModule", true);
+
+		private Type _valueType = null;
 
 		public object GetValue {
 			get {
