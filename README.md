@@ -9,11 +9,10 @@ Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows 
 <i>By adding Unified Renderer to your project, you keep all of the built-in functionality, this package is just an extra layer which simplifies working with that functionality.</i><br><br>
 
 ## How to install
-Simply add the following git url in package manager:<br>
+Simply add the following git url in package manager (for prototypes):<br>
 ```https://github.com/lukakldiashvili/Unified-Renderer-Unity.git```<br>
 
-or, download .unitypackage from the latest release
-
+<b>For production, please find specific version in releases tab, and install latest package with url from there.</b>
 
 ## Features
 
