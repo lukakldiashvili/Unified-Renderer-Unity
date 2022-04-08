@@ -1,11 +1,25 @@
 using System;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 namespace Unify.UnifiedRenderer.Editor {
 	[CustomEditor(typeof(UnifiedRenderer))]
+	[InitializeOnLoad]
 	public class UnifiedRendererEditor : UnityEditor.Editor {
 		private bool showRendererAndFilter;
+
+
+		static UnifiedRendererEditor() {
+			EditorApplication.playModeStateChanged += _ => ApplyAllUnifiedRenderers();
+			Undo.undoRedoPerformed += ApplyAllUnifiedRenderers;
+		}
+
+		static void ApplyAllUnifiedRenderers() {
+			foreach (var unifiedRenderer in FindObjectsOfType<UnifiedRenderer>()) {
+				unifiedRenderer.ApplyPropertiesToBlock();
+			}
+		}
 
 		public override void OnInspectorGUI() {
 			// base.OnInspectorGUI();
@@ -13,7 +27,7 @@ namespace Unify.UnifiedRenderer.Editor {
 			EditorGUI.BeginChangeCheck();
 			//----
 
-			var uniRend = (UnifiedRenderer)target;
+			var uniRend = (UnifiedRenderer) target;
 
 			DrawHead(uniRend);
 
@@ -32,46 +46,13 @@ namespace Unify.UnifiedRenderer.Editor {
 		}
 
 		void DrawHead(UnifiedRenderer unifiedRend) {
-			EditorGUILayout.LabelField("Unified Renderer",
+			EditorGUILayout.LabelField("Properties",
 				new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold });
-			EditorGUILayout.Space(5);
-			
-			showRendererAndFilter = EditorGUILayout.Foldout(showRendererAndFilter,
-				new GUIContent("Materials & Mesh"));
-
-			if (showRendererAndFilter) {
-				if (unifiedRend.GetMeshFilter != null) {
-					var serializedMeshFilter = new SerializedObject(unifiedRend.GetMeshFilter);
-					UnifiedRendererEditorExtensions.DrawSerializedObject(serializedMeshFilter);
-					
-					EditorGUILayout.Space(5);
-				}
-
-				var mats = unifiedRend.GetRenderer.sharedMaterials;
-
-				for (int i = 0; i < mats.Length; i++) {
-					mats[i] = (Material)EditorGUILayout.ObjectField($"Material {i}:", mats[i], typeof(Material), false);
-				}
-			}
 		}
 
 		void DrawMaterialProperties(UnifiedRenderer uniRend) {
 			Undo.RecordObject(target, "Property Change");
 
-			EditorGUILayout.Space(5);
-
-			EditorGUILayout.BeginHorizontal();
-
-			EditorGUILayout.LabelField(
-				new GUIContent("Properties:", "Used when property has been removed from the override list"),
-				new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Italic });
-			
-			if (GUILayout.Button("Clear Unused Data")) {
-				uniRend.ClearPropertyBlock();
-			}
-
-			EditorGUILayout.EndHorizontal();
-			
 			EditorGUILayout.Space(10);
 
 			for (int i = 0; i < uniRend.GetMaterialProperties.Count; i++) {
@@ -96,19 +77,19 @@ namespace Unify.UnifiedRenderer.Editor {
 						false);
 
 					if (valueAssigned != null)
-						data.textureValue = (Texture)valueAssigned;
+						data.textureValue = (Texture) valueAssigned;
 					else
 						data.textureValue = null;
 				}
 
-				DrawMiniButton("O", () => {
-					PopupWindow.Show(new Rect(Event.current.mousePosition, Vector2.zero),
-						new MaterialIndexChangePopup(uniRend ,data, uniRend.GetRenderer.sharedMaterials));
-				});
-				
+				DrawMiniButton("O",
+					() => {
+						PopupWindow.Show(new Rect(Event.current.mousePosition, Vector2.zero),
+							new MaterialIndexChangePopup(uniRend, data, uniRend.GetRenderer.sharedMaterials));
+					});
+
 				DrawMiniButton("X", () => {
 					uniRend.RemoveProperty(data);
-					uniRend.ClearPropertyBlock();
 				});
 
 				EditorGUILayout.EndHorizontal();
@@ -147,6 +128,43 @@ namespace Unify.UnifiedRenderer.Editor {
 
 			if (GUILayout.Button(character, st)) {
 				onClick?.Invoke();
+			}
+		}
+
+		//autohide gizmo
+		[UnityEditor.Callbacks.DidReloadScripts]
+		private static void OnScriptsReloaded() {
+			var Annotation  = Type.GetType("UnityEditor.Annotation, UnityEditor");
+			var ClassId     = Annotation.GetField("classID");
+			var ScriptClass = Annotation.GetField("scriptClass");
+			var Flags       = Annotation.GetField("flags");
+			var IconEnabled = Annotation.GetField("iconEnabled");
+
+			Type AnnotationUtility = Type.GetType("UnityEditor.AnnotationUtility, UnityEditor");
+			var GetAnnotations = AnnotationUtility.GetMethod("GetAnnotations",
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+			var SetIconEnabled = AnnotationUtility.GetMethod("SetIconEnabled",
+				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+
+			Array annotations = (Array) GetAnnotations.Invoke(null, null);
+			foreach (var a in annotations) {
+				int    classId     = (int) ClassId.GetValue(a);
+				string scriptClass = (string) ScriptClass.GetValue(a);
+				int    flags       = (int) Flags.GetValue(a);
+				int    iconEnabled = (int) IconEnabled.GetValue(a);
+
+				// this is done to ignore any built in types
+				if (string.IsNullOrEmpty(scriptClass)) {
+					continue;
+				}
+
+				// load a json or text file with class names
+
+				const int HasIcon     = 1;
+				bool      hasIconFlag = (flags & HasIcon) == HasIcon;
+				if (hasIconFlag && (iconEnabled != 0)) {
+					SetIconEnabled?.Invoke(null, new object[] {classId, scriptClass, 0});
+				}
 			}
 		}
 	}

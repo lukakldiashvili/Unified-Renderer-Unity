@@ -182,7 +182,7 @@ namespace Unify.UnifiedRenderer.Editor {
 				_targetRend.ApplyPropertiesToBlock();
 				EditorUtility.SetDirty(_targetRend);
 
-				var isDuplicate = _targetRend.ContainsSameIdentifierAndIndex(_targetData);
+				var isDuplicate = _targetRend.ContainsIdenticalData(_targetData);
 
 				if (isDuplicate) {
 					EditorUtility.DisplayDialog("Warning (Duplicate properties detected)",

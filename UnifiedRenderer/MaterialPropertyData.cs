@@ -3,23 +3,18 @@ using System.Collections.Generic;
 using Unify.UnifiedRenderer.Serializables;
 using UnityEditor;
 using UnityEngine;
+using PropType = UnityEditor.MaterialProperty.PropType;
 
 namespace Unify.UnifiedRenderer {
-	public enum MaterialPropertyNameType {
-		AUTO,
-		DISPLAY,
-		INTERNAL
-	}
 
 	[Serializable]
 	public class MaterialPropertyData {
 		#if UNITY_EDITOR
-		public static List<MaterialProperty.PropType> SupportedTypes = new List<MaterialProperty.PropType>() {
+		public static List<PropType> SupportedTypes = new() {
 			#if UNITY_2021
-			MaterialProperty.PropType.Int,
+			PropType.Int,
 			#endif
-			MaterialProperty.PropType.Color, MaterialProperty.PropType.Float,
-			MaterialProperty.PropType.Range, MaterialProperty.PropType.Vector, MaterialProperty.PropType.Texture
+			PropType.Color, PropType.Float, PropType.Range, PropType.Vector, PropType.Texture
 		};
 		#endif
 

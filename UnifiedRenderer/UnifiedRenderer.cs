@@ -19,12 +19,6 @@ namespace Unify.UnifiedRenderer {
 					_renderer = GetComponent<Renderer>();
 				}
 
-				#if UNITY_EDITOR
-				if (_renderer == null) {
-					EditorApplication.playModeStateChanged -= ApplyBlockEditor;
-				}
-				#endif
-
 				return _renderer;
 			}
 		}
@@ -42,29 +36,23 @@ namespace Unify.UnifiedRenderer {
 		public List<MaterialPropertyData> GetMaterialProperties => materialProperties;
 
 		[SerializeField]
-		private List<MaterialPropertyData> materialProperties = new List<MaterialPropertyData>();
+		private List<MaterialPropertyData> materialProperties = new();
 
-		private List<MaterialPropertyBlock> propertyBlocks = new List<MaterialPropertyBlock>();
+		private List<MaterialPropertyBlock> propertyBlocks = new();
 
 		private int GetMaterialCount => GetRenderer.sharedMaterials.Length;
-
-
+		
+		
 		private void OnEnable() {
 			ApplyPropertiesToBlock();
 		}
 
-		private void OnDestroy() {
-			#if UNITY_EDITOR
-			EditorApplication.playModeStateChanged -= ApplyBlockEditor;
-			#endif
-		}
-
-		public bool SetMaterialProperty(string identifier, object value, int materialIndex = 0,
-        		                                MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO,
+		
+		public bool TrySetPropertyValue(string identifier, object value, int materialIndex = 0,
         		                                bool immediateApply = true) {
         	try {
         		var selectedProp = GetMaterialProperties.First(prop =>
-        			prop.GetNameWithType(nameType) == identifier && prop.GetMaterialID == materialIndex);
+        			prop.GetInternalName == identifier && prop.GetMaterialID == materialIndex);
         		
         		var result = selectedProp.UpdateValue(value);
 
@@ -74,67 +62,46 @@ namespace Unify.UnifiedRenderer {
         	catch (Exception e) {
         		return false;
         	}
-
-        	return false;
-        }
-
-		#region Property Getters
-		
-		public Color? GetMaterialPropertyColor(string identifier,
-		                                       MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO) {
-			var propertyData = FindDataWithIdentifier(identifier, nameType.GetDefaultIfAuto());
-			
-			if (!(propertyData is null) && propertyData.GetValueType == typeof(Color)) return propertyData.colorValue;
-
-			return null;
-		}
-
-		public float? GetMaterialPropertyFloat(string identifier,
-		                                     MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO) {
-			var propertyData = FindDataWithIdentifier(identifier, nameType.GetDefaultIfAuto());
-			
-			if (!(propertyData is null) && propertyData.GetValueType == typeof(float)) return propertyData.floatValue;
-
-			return null;
-		}
-
-		public int? GetMaterialPropertyInt(string identifier,
-		                                       MaterialPropertyNameType nameType = MaterialPropertyNameType.AUTO) {
-			var propertyData = FindDataWithIdentifier(identifier, nameType.GetDefaultIfAuto());
-			
-			if (!(propertyData is null) && propertyData.GetValueType == typeof(int)) return propertyData.intValue;
-
-			return null;
 		}
 		
-		#endregion
+		/// <summary>
+		/// Gets property by identifier and returns its value. It is recommended to use TryGetPropertyValue instead
+		/// to avoid NullReferenceException.
+		/// </summary>
+		public T GetPropertyValue<T> (string identifier) {
+			return TryGetPropertyValue<T>(identifier, out var value) ? value : default;
+		}
 
-		void UpdateListMembers() {
-			if (propertyBlocks.Count == 0 || GetMaterialCount != propertyBlocks.Count) {
-				propertyBlocks.Clear();
+		public bool TryGetPropertyValue<T> (string identifier, out T value) {
+			var propertyData = GetPropertyData(identifier);
 
-				for (int i = 0; i < GetMaterialCount; i++) {
-					propertyBlocks.Add(new MaterialPropertyBlock());
-				}
+			if (propertyData is not null && propertyData.GetValueType == typeof(T)) {
+				value = (T) propertyData.GetValue;
 
-				#if UNITY_EDITOR
-				EditorApplication.playModeStateChanged -= ApplyBlockEditor;
-				EditorApplication.playModeStateChanged += ApplyBlockEditor;
-				#endif
+				return true;
 			}
-		}
-		
-		public void ClearPropertyBlock() {
-			UpdateListMembers();
 
-			foreach (var block in propertyBlocks) {
-				block.Clear();
-			}
+			value = default;
+			return false;
+		}
+
+		public bool ContainsIdenticalData(MaterialPropertyData newData) {
+			return materialProperties.Count(data => data == newData) > 1;
 		}
 
 		public void ApplyPropertiesToBlock() {
 			UpdateListMembers();
 			ApplyBlock();
+		}
+		
+		void UpdateListMembers() {
+			if (propertyBlocks.Count != 0 && GetMaterialCount == propertyBlocks.Count) return;
+			
+			propertyBlocks.Clear();
+
+			for (int i = 0; i < GetMaterialCount; i++) {
+				propertyBlocks.Add(new MaterialPropertyBlock());
+			}
 		}
 		
 		void ApplyBlock(bool getBlocksFirst = false) {
@@ -171,30 +138,19 @@ namespace Unify.UnifiedRenderer {
 			
 			SetAllBlocks();
 		}
-
-		public bool ContainsSameIdentifierAndIndex(MaterialPropertyData newData) {
-			int matchCount = 0;
-			
-			foreach (var data in materialProperties) {
-				if (data == newData) matchCount++;
-			}
-
-			return matchCount > 1;
-		}
+		
 
 		private void SetAllBlocks() {
 			if (GetMaterialCount != propertyBlocks.Count) return;
 			
-			for (int i = 0; i < GetMaterialCount; i++) {
-				GetRenderer.SetPropertyBlock(propertyBlocks[i], i);
+			for (int matIndex = 0; matIndex < GetMaterialCount; matIndex++) {
+				GetRenderer.SetPropertyBlock(propertyBlocks[matIndex], matIndex);
 			}
 		}
 
-		private MaterialPropertyData FindDataWithIdentifier(string identifier,
-		                                                    MaterialPropertyNameType nameType) {
+		private MaterialPropertyData GetPropertyData(string identifier) {
 			foreach (var propertyData in GetMaterialProperties) {
-				if ((nameType == MaterialPropertyNameType.DISPLAY  && propertyData.GetDisplayName  == identifier) ||
-				    (nameType == MaterialPropertyNameType.INTERNAL && propertyData.GetInternalName == identifier)) {
+				if (propertyData.GetInternalName == identifier) {
 					return propertyData;
 				}
 			}
@@ -202,15 +158,13 @@ namespace Unify.UnifiedRenderer {
 			return null;
 		}
 		
-		
-		#region Editor
-		#if UNITY_EDITOR
-		
-		void ApplyBlockEditor(PlayModeStateChange change) {
-			ApplyBlock();
+		[ContextMenu("Clear Unused Data")]
+		public void ClearPropertyBlock() {
+			UpdateListMembers();
+
+			foreach (var block in propertyBlocks) {
+				block.Clear();
+			}
 		}
-		
-		#endif
-		#endregion
 	}
 }

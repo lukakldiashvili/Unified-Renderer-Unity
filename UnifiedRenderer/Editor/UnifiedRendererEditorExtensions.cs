@@ -10,6 +10,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 		public static void RemoveProperty(this UnifiedRenderer rend, MaterialPropertyData newProp) {
 			rend.GetMaterialProperties.Remove(newProp);
+			rend.ClearPropertyBlock();
 			EditorUtility.SetDirty(rend.gameObject);
 		}
 		
