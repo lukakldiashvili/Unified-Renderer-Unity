@@ -24,11 +24,11 @@ public class DemoBall : MonoBehaviour {
 	private void Update() {
 		_currentHue += Time.deltaTime * 0.1f;
 
-		_unifiedRenderer.SetMaterialProperty("_BaseColor", Color.HSVToRGB(_currentHue     % 1, 1, 1));
-		_unifiedRenderer.SetMaterialProperty("_EmissionColor", Color.HSVToRGB(_currentHue % 1, 1, 1));
+		_unifiedRenderer.TrySetPropertyValue("_BaseColor", Color.HSVToRGB(_currentHue     % 1, 1, 1));
+		_unifiedRenderer.TrySetPropertyValue("_EmissionColor", Color.HSVToRGB(_currentHue % 1, 1, 1));
 
-		_unifiedRenderer.SetMaterialProperty("_BaseColor", Color.HSVToRGB((_currentHue     + 0.23f) % 1, 1, 1), 1);
-		_unifiedRenderer.SetMaterialProperty("_EmissionColor", Color.HSVToRGB((_currentHue + 0.23f) % 1, 1, 1), 1);
+		_unifiedRenderer.TrySetPropertyValue("_BaseColor", Color.HSVToRGB((_currentHue     + 0.23f) % 1, 1, 1), 1);
+		_unifiedRenderer.TrySetPropertyValue("_EmissionColor", Color.HSVToRGB((_currentHue + 0.23f) % 1, 1, 1), 1);
 	}
 
 	private void OnTriggerEnter(Collider other) {
