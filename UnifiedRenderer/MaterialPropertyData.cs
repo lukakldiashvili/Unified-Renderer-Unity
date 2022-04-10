@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unify.UnifiedRenderer.Serializables;
-using UnityEditor;
 using UnityEngine;
 using PropType = UnityEditor.MaterialProperty.PropType;
 
@@ -28,9 +26,9 @@ namespace Unify.UnifiedRenderer {
 		[SerializeField] public bool boolValue;
 		[SerializeField] public float floatValue;
 		
-		[SerializeField] private SerializableColor _colorValue;
-		[SerializeField] private SerializableVector _vectorValue;
-		[SerializeField] private SerializableTexture _textureValue;
+		[SerializeField] public Color colorValue;
+		[SerializeField] public Vector4 vectorValue;
+		[SerializeField] public Texture textureValue;
 		
 		//Accessors
 		
@@ -39,22 +37,6 @@ namespace Unify.UnifiedRenderer {
 		public string GetInternalName => internalName;
 		public string GetTypeName => typeName;
 		public int GetMaterialID => materialId;
-
-
-		public Color colorValue {
-			get => _colorValue.GetColor;
-			set => _colorValue = new SerializableColor(value);
-		}
-
-		public Vector4 vectorValue {
-			get => _vectorValue.GetVector;
-			set => _vectorValue = new SerializableVector(value);
-		}
-
-		public Texture textureValue {
-			get => _textureValue.GetTexture;
-			set => _textureValue = new SerializableTexture(value);
-		}
 		
 		public string GetNameForDisplay => $"{(UnifiedRenderer.UseDisplayPropertyName ? displayName : internalName)}";
 

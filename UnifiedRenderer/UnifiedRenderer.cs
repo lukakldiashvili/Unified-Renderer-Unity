@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace Unify.UnifiedRenderer {
@@ -95,8 +94,6 @@ namespace Unify.UnifiedRenderer {
 		}
 		
 		void UpdateListMembers() {
-			if (propertyBlocks.Count != 0 && GetMaterialCount == propertyBlocks.Count) return;
-			
 			propertyBlocks.Clear();
 
 			for (int i = 0; i < GetMaterialCount; i++) {

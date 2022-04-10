@@ -4,15 +4,21 @@ using UnityEditor;
 using UnityEngine;
 
 namespace Unify.UnifiedRenderer.Editor {
-	[CustomEditor(typeof(UnifiedRenderer))]
+	[CustomEditor(typeof(UnifiedRenderer), true)]
 	[InitializeOnLoad]
+	[CanEditMultipleObjects]
 	public class UnifiedRendererEditor : UnityEditor.Editor {
 		private bool showRendererAndFilter;
 
-
 		static UnifiedRendererEditor() {
 			EditorApplication.playModeStateChanged += _ => ApplyAllUnifiedRenderers();
-			Undo.undoRedoPerformed += ApplyAllUnifiedRenderers;
+			Undo.undoRedoPerformed                 += ApplyAllUnifiedRenderers;
+		}
+
+		SerializedProperty materialPropertiesProp;
+
+		void OnEnable() {
+			materialPropertiesProp = serializedObject.FindProperty("materialProperties");
 		}
 
 		static void ApplyAllUnifiedRenderers() {
@@ -23,7 +29,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 		public override void OnInspectorGUI() {
 			// base.OnInspectorGUI();
-			serializedObject.UpdateIfRequiredOrScript();
+			serializedObject.Update();
 			EditorGUI.BeginChangeCheck();
 			//----
 
@@ -47,7 +53,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 		void DrawHead(UnifiedRenderer unifiedRend) {
 			EditorGUILayout.LabelField("Properties",
-				new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold });
+				new GUIStyle(GUI.skin.label) {alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold});
 		}
 
 		void DrawMaterialProperties(UnifiedRenderer uniRend) {
@@ -55,52 +61,8 @@ namespace Unify.UnifiedRenderer.Editor {
 
 			EditorGUILayout.Space(10);
 
-			for (int i = 0; i < uniRend.GetMaterialProperties.Count; i++) {
-				var data = uniRend.GetMaterialProperties[i];
-
-				var horRect = EditorGUILayout.BeginHorizontal();
-
-				var fieldName = $"{data.GetNameForDisplay} (Mat ID: {data.GetMaterialID})";
-
-				if (data.GetValueType == typeof(int))
-					data.intValue = EditorGUILayout.IntField(fieldName, data.intValue);
-				if (data.GetValueType == typeof(float))
-					data.floatValue = EditorGUILayout.FloatField(fieldName, data.floatValue);
-				if (data.GetValueType == typeof(Color))
-					data.colorValue = EditorGUILayout.ColorField(fieldName, data.colorValue);
-				if (data.GetValueType == typeof(bool))
-					data.boolValue = EditorGUILayout.Toggle(fieldName, data.boolValue);
-				if (data.GetValueType == typeof(Vector4))
-					data.vectorValue = EditorGUILayout.Vector4Field(fieldName, data.vectorValue);
-				if (data.GetValueType == typeof(Texture) || data.GetValueType.IsSubclassOf(typeof(Texture))) {
-					var valueAssigned = EditorGUILayout.ObjectField(fieldName, data.textureValue, typeof(Texture),
-						false);
-
-					if (valueAssigned != null)
-						data.textureValue = (Texture) valueAssigned;
-					else
-						data.textureValue = null;
-				}
-
-				DrawMiniButton("O",
-					() => {
-						PopupWindow.Show(new Rect(Event.current.mousePosition, Vector2.zero),
-							new MaterialIndexChangePopup(uniRend, data, uniRend.GetRenderer.sharedMaterials));
-					});
-
-				DrawMiniButton("X", () => {
-					uniRend.RemoveProperty(data);
-				});
-
-				EditorGUILayout.EndHorizontal();
-
-				var backgroundRedRect = new Rect(horRect.x - 13, horRect.y, EditorGUIUtility.currentViewWidth,
-					horRect.height);
-
-				if (!uniRend.IsPropertyApplicable(data)) {
-					// DrawMiniButton(()=>{});
-					EditorGUI.DrawRect(backgroundRedRect, new Color(1f, 0, 0, 0.2f));
-				}
+			for (int i = 0; i < materialPropertiesProp.arraySize; i++) {
+				EditorGUILayout.PropertyField(materialPropertiesProp.GetArrayElementAtIndex(i));
 			}
 		}
 
@@ -119,16 +81,6 @@ namespace Unify.UnifiedRenderer.Editor {
 			}
 
 			EditorGUILayout.EndHorizontal();
-		}
-
-		void DrawMiniButton(string character, Action onClick) {
-			var st = EditorStyles.miniButton;
-			st.wordWrap   = true;
-			st.fixedWidth = 25;
-
-			if (GUILayout.Button(character, st)) {
-				onClick?.Invoke();
-			}
 		}
 
 		//autohide gizmo
