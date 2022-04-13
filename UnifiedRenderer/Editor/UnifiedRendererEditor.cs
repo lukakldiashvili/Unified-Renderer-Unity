@@ -61,7 +61,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 			EditorGUILayout.Space(10);
 
-			for (int i = 0; i < materialPropertiesProp.arraySize; i++) {
+			for (int i = materialPropertiesProp.arraySize - 1; i >= 0; i--) {
 				EditorGUILayout.PropertyField(materialPropertiesProp.GetArrayElementAtIndex(i));
 			}
 		}
