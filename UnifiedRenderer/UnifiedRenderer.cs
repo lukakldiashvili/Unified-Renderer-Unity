@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace Unify.UnifiedRenderer {
 	[RequireComponent(typeof(Renderer))]
+	[DisallowMultipleComponent]
 	[ExecuteAlways]
 	public class UnifiedRenderer : MonoBehaviour {
 		public static bool UseDisplayPropertyName = false;
