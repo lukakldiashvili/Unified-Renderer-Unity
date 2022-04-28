@@ -180,9 +180,8 @@ namespace Unify.UnifiedRenderer.Editor {
 			if (_selectedMaterial != -1 && !isOnClose) {
 				_setupComplete = true;
 				
-				_targetData.UpdateMaterialID(_selectedMaterial - 1);
-				_targetRend.ClearPropertyBlock();
-				_targetRend.ApplyPropertiesToBlock();
+				_targetRend.UpdatePropertyMaterialIndex(_targetData, _selectedMaterial - 1);
+
 				EditorUtility.SetDirty(_targetRend);
 
 				var isDuplicate = _targetRend.ContainsIdenticalData(_targetData);

@@ -33,13 +33,14 @@ namespace Unify.UnifiedRenderer {
 		private Renderer _renderer = null;
 		private MeshFilter _meshFilter = null;
 
-		public List<MaterialPropertyData> GetMaterialProperties => materialProperties;
 
 		[SerializeField]
 		private List<MaterialPropertyData> materialProperties = new();
 
 		private List<MaterialPropertyBlock> propertyBlocks = new();
 
+		
+		public List<MaterialPropertyData> GetMaterialProperties => materialProperties;
 		private int GetMaterialCount => GetRenderer.sharedMaterials.Length;
 		
 		
@@ -55,6 +56,25 @@ namespace Unify.UnifiedRenderer {
 			materialProperties.Add(newProperty);
 
 			return true;
+		}
+
+		public void RemoveProperty(string identifier, int materialIndex = -1) {
+			MaterialPropertyData dataFound = GetPropertyData(identifier, materialIndex);
+			if (dataFound != null) RemoveProperty(dataFound);
+		}
+
+		public void RemoveProperty(MaterialPropertyData dataToRemove) {
+			GetMaterialProperties.Remove(dataToRemove);
+
+			ClearPropertyBlocks();
+			ApplyPropertiesToBlock();
+		}
+		
+		public void DiscardAllProperties() {
+			GetMaterialProperties.Clear();
+
+			ClearPropertyBlocks();
+			ApplyPropertiesToBlock();
 		}
 		
 		public bool TrySetPropertyValue(string identifier, object value, int materialIndex = -1,
@@ -113,6 +133,13 @@ namespace Unify.UnifiedRenderer {
 		public void ApplyPropertiesToBlock() {
 			UpdateListMembers();
 			ApplyBlock();
+		}
+
+		public void UpdatePropertyMaterialIndex(MaterialPropertyData data, int index) {
+			data.UpdateMaterialID(index);
+			
+			ClearPropertyBlocks();
+			ApplyPropertiesToBlock();
 		}
 		
 		void UpdateListMembers() {
@@ -189,7 +216,7 @@ namespace Unify.UnifiedRenderer {
 		}
 		
 		[ContextMenu("Clear Unused Data")]
-		public void ClearPropertyBlock() {
+		private void ClearPropertyBlocks() {
 			UpdateListMembers();
 
 			foreach (var block in propertyBlocks) {

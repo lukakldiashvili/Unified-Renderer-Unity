@@ -9,15 +9,12 @@ namespace Unify.UnifiedRenderer.Editor {
 		}
 
 		public static void RemoveProperty(this UnifiedRenderer rend, MaterialPropertyData newProp) {
-			rend.GetMaterialProperties.Remove(newProp);
-			rend.ClearPropertyBlock();
-			rend.ApplyPropertiesToBlock();
+			rend.RemoveProperty(newProp);
 			EditorUtility.SetDirty(rend);
 		}
 		
 		public static void ClearProperties(this UnifiedRenderer rend) {
-			rend.GetMaterialProperties.Clear();
-			rend.ApplyPropertiesToBlock();
+			rend.DiscardAllProperties();
 			EditorUtility.SetDirty(rend);
 		}
 		
