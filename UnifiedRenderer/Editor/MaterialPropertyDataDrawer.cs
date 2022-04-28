@@ -59,7 +59,8 @@ namespace Unify.UnifiedRenderer.Editor {
 		}
 
 		void DrawMaterialProperty(Rect rect, SerializedProperty property, MaterialPropertyData data, Object target, bool isMultiTarget) {
-			var fieldNameCont = new GUIContent($"{data.GetInternalName}  (matId: {data.GetMaterialID})");
+			string matIndex      = data.GetMaterialID == -1 ? "(Global)" : $"(matId: {data.GetMaterialID})";
+			var    fieldNameCont = new GUIContent($"{data.GetInternalName} {matIndex}");
 
 			rect.width -= 55;
 			

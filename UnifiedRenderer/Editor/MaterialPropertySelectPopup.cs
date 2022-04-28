@@ -13,6 +13,7 @@ namespace Unify.UnifiedRenderer.Editor {
 		private MaterialProperty[] _properties;
 		private string[] _propertyOptions;
 		private int _selectedProperty = -1;
+		private bool _isGlobal = false;
 
 		private int SelectedMaterial {
 			set {
@@ -41,7 +42,7 @@ namespace Unify.UnifiedRenderer.Editor {
 		}
 
 		public override Vector2 GetWindowSize() {
-			return new Vector2(350, 80);
+			return new Vector2(350, 100);
 		}
 
 		public override void OnGUI(Rect rect) {
@@ -64,6 +65,8 @@ namespace Unify.UnifiedRenderer.Editor {
 			var propertyInd = EditorGUILayout.Popup("Select Property", _selectedProperty, _propertyOptions);
 
 			_selectedProperty = propertyInd;
+
+			_isGlobal = EditorGUILayout.Toggle("Is Global", _isGlobal);
 
 			if (_selectedProperty != -1) {
 				if (GUILayout.Button("Add Reference")) {
@@ -91,8 +94,8 @@ namespace Unify.UnifiedRenderer.Editor {
 
 				var prop = _properties[_selectedProperty];
 
-				var newData = new MaterialPropertyData(prop.displayName, prop.name, _materials[_selectedMaterial].name, _selectedMaterial,
-					null);
+				var newData = new MaterialPropertyData(prop.displayName, prop.name, _materials[_selectedMaterial].name, 
+					_isGlobal ? -1 : _selectedMaterial, null);
 
 				var type = prop.type;
 
@@ -142,7 +145,7 @@ namespace Unify.UnifiedRenderer.Editor {
 			
 			int matCount = 0;
 			
-			_materialOptions = (from mat in _materials select $"{mat.name} ({matCount++})").ToArray();
+			_materialOptions = (from mat in _materials select $"{mat.name} ({matCount++})").Prepend("Global").ToArray();
 		}
 
 		public override Vector2 GetWindowSize() {
@@ -177,7 +180,7 @@ namespace Unify.UnifiedRenderer.Editor {
 			if (_selectedMaterial != -1 && !isOnClose) {
 				_setupComplete = true;
 				
-				_targetData.UpdateMaterialID(_selectedMaterial);
+				_targetData.UpdateMaterialID(_selectedMaterial - 1);
 				_targetRend.ClearPropertyBlock();
 				_targetRend.ApplyPropertiesToBlock();
 				EditorUtility.SetDirty(_targetRend);

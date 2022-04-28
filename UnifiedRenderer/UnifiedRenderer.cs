@@ -47,8 +47,17 @@ namespace Unify.UnifiedRenderer {
 			ApplyPropertiesToBlock();
 		}
 
+		public bool AddProperty(string identifier, object value, int materialIndex = -1) {
+			if (GetPropertyData(identifier, materialIndex) != null) return false;
+
+			var newProperty = new MaterialPropertyData(identifier,identifier, "unknown", materialIndex, value);
+			
+			materialProperties.Add(newProperty);
+
+			return true;
+		}
 		
-		public bool TrySetPropertyValue(string identifier, object value, int materialIndex = 0,
+		public bool TrySetPropertyValue(string identifier, object value, int materialIndex = -1,
         		                                bool immediateApply = true) {
         	try {
         		var selectedProp = GetMaterialProperties.First(prop =>
@@ -68,12 +77,24 @@ namespace Unify.UnifiedRenderer {
 		/// Gets property by identifier and returns its value. It is recommended to use TryGetPropertyValue instead
 		/// to avoid NullReferenceException.
 		/// </summary>
-		public T GetPropertyValue<T> (string identifier) {
-			return TryGetPropertyValue<T>(identifier, out var value) ? value : default;
+		/// <param name="identifier"></param>
+		/// <param name="matIndex">Pass -1 to get global property.</param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public T GetPropertyValue<T> (string identifier, int matIndex = -1) {
+			return TryGetPropertyValue<T>(identifier, out var value, matIndex) ? value : default;
 		}
 
-		public bool TryGetPropertyValue<T> (string identifier, out T value) {
-			var propertyData = GetPropertyData(identifier);
+		/// <summary>
+		/// Tries to return global property by default.
+		/// </summary>
+		/// <param name="identifier"></param>
+		/// <param name="matIndex">Pass -1 to get global property.</param>
+		/// <param name="value"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public bool TryGetPropertyValue<T> (string identifier, out T value, int matIndex = -1) {
+			var propertyData = GetPropertyData(identifier, matIndex);
 
 			if (propertyData is not null && propertyData.GetValueType == typeof(T)) {
 				value = (T) propertyData.GetValue;
@@ -113,28 +134,39 @@ namespace Unify.UnifiedRenderer {
 				var internalName = propertyData.GetInternalName;
 				var valueType    = propertyData.GetValueType;
 				var matIndex     = propertyData.GetMaterialID;
-				
-				if (valueType == typeof(int))
-					propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
-				if (valueType == typeof(float))
-					propertyBlocks[matIndex].SetFloat(internalName, propertyData.floatValue);
-				if (valueType == typeof(Color))
-					propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
-				if (valueType == typeof(Vector4))
-					propertyBlocks[matIndex].SetVector(internalName, propertyData.vectorValue);
-				if (valueType == typeof(Texture) || valueType.IsSubclassOf(typeof(Texture))) {
-					if (propertyData.textureValue != null) {
-						propertyBlocks[matIndex].SetTexture(internalName, propertyData.textureValue);
-					}
-					else {
-						propertyBlocks[matIndex].Clear();
+
+				if (matIndex == -1) {
+					for (int i = 0; i < GetMaterialCount; i++) {
+						SetBlockValue(internalName, valueType, i, propertyData);
 					}
 				}
-				if (valueType == typeof(bool))
-					propertyBlocks[matIndex].SetFloat(internalName, propertyData.boolValue ? 1 : 0);
+				else {
+					SetBlockValue(internalName, valueType, matIndex, propertyData);
+				}
 			}
 			
 			SetAllBlocks();
+		}
+		
+		private void SetBlockValue(string internalName, Type valueType, int matIndex, MaterialPropertyData propertyData) {
+			if (valueType == typeof(int))
+				propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
+			if (valueType == typeof(float))
+				propertyBlocks[matIndex].SetFloat(internalName, propertyData.floatValue);
+			if (valueType == typeof(Color))
+				propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
+			if (valueType == typeof(Vector4))
+				propertyBlocks[matIndex].SetVector(internalName, propertyData.vectorValue);
+			if (valueType == typeof(Texture) || valueType.IsSubclassOf(typeof(Texture))) {
+				if (propertyData.textureValue != null) {
+					propertyBlocks[matIndex].SetTexture(internalName, propertyData.textureValue);
+				}
+				else {
+					propertyBlocks[matIndex].Clear();
+				}
+			}
+			if (valueType == typeof(bool))
+				propertyBlocks[matIndex].SetFloat(internalName, propertyData.boolValue ? 1 : 0);
 		}
 		
 
@@ -146,9 +178,9 @@ namespace Unify.UnifiedRenderer {
 			}
 		}
 
-		private MaterialPropertyData GetPropertyData(string identifier) {
+		private MaterialPropertyData GetPropertyData(string identifier, int matIndex) {
 			foreach (var propertyData in GetMaterialProperties) {
-				if (propertyData.GetInternalName == identifier) {
+				if (propertyData.GetInternalName == identifier && propertyData.GetMaterialID == matIndex) {
 					return propertyData;
 				}
 			}
