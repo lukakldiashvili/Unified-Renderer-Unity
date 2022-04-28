@@ -5,20 +5,20 @@ namespace Unify.UnifiedRenderer.Editor {
 	public static class UnifiedRendererEditorExtensions {
 		public static void AddNewProperty(this UnifiedRenderer rend, MaterialPropertyData newProp) {
 			rend.GetMaterialProperties.Add(newProp);
-			EditorUtility.SetDirty(rend.gameObject);
+			EditorUtility.SetDirty(rend);
 		}
 
 		public static void RemoveProperty(this UnifiedRenderer rend, MaterialPropertyData newProp) {
 			rend.GetMaterialProperties.Remove(newProp);
 			rend.ClearPropertyBlock();
 			rend.ApplyPropertiesToBlock();
-			EditorUtility.SetDirty(rend.gameObject);
+			EditorUtility.SetDirty(rend);
 		}
 		
 		public static void ClearProperties(this UnifiedRenderer rend) {
 			rend.GetMaterialProperties.Clear();
 			rend.ApplyPropertiesToBlock();
-			EditorUtility.SetDirty(rend.gameObject);
+			EditorUtility.SetDirty(rend);
 		}
 		
 		public static bool ContainsProperty(this UnifiedRenderer rend, MaterialPropertyData newProp) {
