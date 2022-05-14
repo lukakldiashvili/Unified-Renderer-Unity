@@ -77,7 +77,7 @@ namespace Unify.UnifiedRenderer {
 			ApplyPropertiesToBlock();
 		}
 		
-		public bool TrySetPropertyValue(string identifier, object value, int materialIndex = -1,
+		public bool TrySetPropertyValue<T>(string identifier, T value, int materialIndex = -1,
         		                                bool immediateApply = true) {
         	try {
         		var selectedProp = GetMaterialProperties.First(prop =>

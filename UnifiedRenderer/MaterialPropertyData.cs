@@ -33,7 +33,6 @@ namespace Unify.UnifiedRenderer {
 		[SerializeField] public Texture textureValue;
 		
 		//Accessors
-		
 		public string GetDisplayName => displayName;
 		public string GetMaterialName => materialName;
 		public string GetInternalName => internalName;
@@ -60,8 +59,6 @@ namespace Unify.UnifiedRenderer {
 			}
 		}
 
-		// public bool HasEmptyValue => hasEmptyValue || typeName == String.Empty;
-
 		public MaterialPropertyData(string mDisplayName, string mInternalName, string mMaterialName, int mMaterialId, object mValue) {
 			displayName  = mDisplayName;
 			internalName = mInternalName;
@@ -69,11 +66,16 @@ namespace Unify.UnifiedRenderer {
 			materialId   = mMaterialId;
 
 			if (mValue != null) {
-				UpdateValue(mValue);
+				UpdateValueBoxed(mValue);
 			}
 		}
 
-		public bool UpdateValue(object mValue, Type typeOverride = null) {
+		[Obsolete]
+		private bool UpdateValueBoxed(object mValue, Type typeOverride = null) {
+			return UpdateValue(mValue, typeOverride);
+		}
+		
+		public bool UpdateValue<T>(T mValue, Type typeOverride = null) {
 			if (typeOverride == null) typeOverride = mValue.GetType();
 
 			typeName = typeOverride.FullName;
@@ -83,7 +85,7 @@ namespace Unify.UnifiedRenderer {
 			else if (mValue is Color colorVal) colorValue          = colorVal;
 			else if (mValue is Vector4 vectorVal) vectorValue      = vectorVal;
 			else if (mValue is bool boolVal) boolValue             = boolVal;
-			else if (typeOverride == typeof(Texture) || typeOverride.IsSubclassOf(typeof(Texture))) textureValue = (Texture) mValue;
+			else if (typeOverride == typeof(Texture) || typeOverride.IsSubclassOf(typeof(Texture))) textureValue = mValue as Texture;
 			else {
 				Debug.LogError("Unified Renderer: Unsupported type detected!");
 				return false;
