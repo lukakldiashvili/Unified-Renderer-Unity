@@ -11,9 +11,6 @@ namespace Unify.UnifiedRenderer {
 	public class MaterialPropertyData {
 		#if UNITY_EDITOR
 		public static List<PropType> SupportedTypes = new() {
-			#if UNITY_2021
-			PropType.Int,
-			#endif
 			PropType.Color, PropType.Float, PropType.Range, PropType.Vector, PropType.Texture
 		};
 		#endif
@@ -24,7 +21,6 @@ namespace Unify.UnifiedRenderer {
 		[SerializeField] private string typeName;
 		[SerializeField] private int materialId;
 
-		[SerializeField] public int intValue;
 		[SerializeField] public bool boolValue;
 		[SerializeField] public float floatValue;
 		
@@ -48,8 +44,7 @@ namespace Unify.UnifiedRenderer {
 
 		public object GetValue {
 			get {
-				if (GetValueType == typeof(int)) return intValue;
-				if (GetValueType == typeof(float)) return floatValue;
+				if (GetValueType == typeof(float) || GetValueType == typeof(int)) return floatValue;
 				if (GetValueType == typeof(Color)) return colorValue;
 				if (GetValueType == typeof(Vector4)) return vectorValue;
 				if (GetValueType == typeof(Texture) || GetValueType.IsSubclassOf(typeof(Texture))) return textureValue;
@@ -76,11 +71,14 @@ namespace Unify.UnifiedRenderer {
 		}
 		
 		public bool UpdateValue<T>(T mValue, Type typeOverride = null) {
-			if (typeOverride == null) typeOverride = mValue.GetType();
+			//Manually converting int to float
+			if (mValue is int) typeOverride = typeof(float);
+			
+			typeOverride ??= mValue.GetType();
 
 			typeName = typeOverride.FullName;
 
-			if (mValue is int intVal) intValue                     = intVal;
+			if (mValue is int intVal) floatValue                   = intVal;
 			else if (mValue is float floatVal) floatValue          = floatVal;
 			else if (mValue is Color colorVal) colorValue          = colorVal;
 			else if (mValue is Vector4 vectorVal) vectorValue      = vectorVal;

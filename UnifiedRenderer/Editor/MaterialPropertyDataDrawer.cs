@@ -64,9 +64,7 @@ namespace Unify.UnifiedRenderer.Editor {
 
 			rect.width -= 55;
 			
-			if (data.GetValueType == typeof(int))
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("intValue"), fieldNameCont);
-			else if (data.GetValueType == typeof(float))
+			if (data.GetValueType == typeof(float))
 				EditorGUI.PropertyField(rect, property.FindPropertyRelative("floatValue"), fieldNameCont);
 			else if (data.GetValueType == typeof(Color))
 				EditorGUI.PropertyField(rect, property.FindPropertyRelative("colorValue"), fieldNameCont);

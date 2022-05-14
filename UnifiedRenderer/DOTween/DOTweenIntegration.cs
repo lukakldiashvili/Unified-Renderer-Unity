@@ -17,6 +17,18 @@ namespace Unify.UnifiedRenderer.DOTween {
             t.SetTarget(uniRend);
             return t;
         }
+        
+        public static TweenerCore<float, float, FloatOptions> DOFloat(this UnifiedRenderer uniRend, string identifier, int matIndex, float endValue, float duration) {
+            TweenerCore<float, float, FloatOptions> t = DG.Tweening.DOTween.To(() => {
+                uniRend.TryGetPropertyValue<float>(identifier, out var floatVal, matIndex);
+                return floatVal;
+            }, x => {
+                uniRend.TrySetPropertyValue(identifier, x, matIndex);
+            }, endValue, duration);
+            
+            t.SetTarget(uniRend);
+            return t;
+        }
 
     }
 }
