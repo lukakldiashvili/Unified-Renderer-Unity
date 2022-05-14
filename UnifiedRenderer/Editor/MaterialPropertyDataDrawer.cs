@@ -66,8 +66,25 @@ namespace Unify.UnifiedRenderer.Editor {
 			
 			if (data.GetValueType == typeof(float))
 				EditorGUI.PropertyField(rect, property.FindPropertyRelative("floatValue"), fieldNameCont);
-			else if (data.GetValueType == typeof(Color))
-				EditorGUI.PropertyField(rect, property.FindPropertyRelative("colorValue"), fieldNameCont);
+			else if (data.GetValueType == typeof(Color)) {
+				var hdrRect = new Rect(rect) {
+					width = 50
+				};
+
+				bool hdrValue = EditorGUI.ToggleLeft(hdrRect, new GUIContent("HDR"), data.GetIsColorHDR);
+
+				if (hdrValue != data.GetIsColorHDR) {
+					data.EnableHDR(hdrValue);
+				}
+				
+				rect.width -= 50;
+				rect.x += 50;
+				
+				EditorGUI.PropertyField(rect,
+					data.GetIsColorHDR
+						? property.FindPropertyRelative("hdrColorValue")
+						: property.FindPropertyRelative("colorValue"), fieldNameCont);
+			}
 			else if (data.GetValueType == typeof(bool))
 				EditorGUI.PropertyField(rect, property.FindPropertyRelative("boolValue"), fieldNameCont);
 			else if (data.GetValueType == typeof(Vector4))

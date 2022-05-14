@@ -25,8 +25,13 @@ namespace Unify.UnifiedRenderer {
 		[SerializeField] public float floatValue;
 		
 		[SerializeField] public Color colorValue;
+		[ColorUsage(true, true)]
+		[SerializeField] public Color hdrColorValue;
 		[SerializeField] public Vector4 vectorValue;
 		[SerializeField] public Texture textureValue;
+
+		[SerializeField] private bool isHdr;
+		
 		
 		//Accessors
 		public string GetDisplayName => displayName;
@@ -34,6 +39,7 @@ namespace Unify.UnifiedRenderer {
 		public string GetInternalName => internalName;
 		public string GetTypeName => typeName;
 		public int GetMaterialID => materialId;
+		public bool GetIsColorHDR => isHdr;
 		
 		public string GetNameForDisplay => $"{(UnifiedRenderer.UseDisplayPropertyName ? displayName : internalName)}";
 
@@ -45,7 +51,7 @@ namespace Unify.UnifiedRenderer {
 		public object GetValue {
 			get {
 				if (GetValueType == typeof(float) || GetValueType == typeof(int)) return floatValue;
-				if (GetValueType == typeof(Color)) return colorValue;
+				if (GetValueType == typeof(Color)) return GetIsColorHDR ? hdrColorValue : colorValue;
 				if (GetValueType == typeof(Vector4)) return vectorValue;
 				if (GetValueType == typeof(Texture) || GetValueType.IsSubclassOf(typeof(Texture))) return textureValue;
 				if (GetValueType == typeof(bool)) return boolValue;
@@ -80,7 +86,10 @@ namespace Unify.UnifiedRenderer {
 
 			if (mValue is int intVal) floatValue                   = intVal;
 			else if (mValue is float floatVal) floatValue          = floatVal;
-			else if (mValue is Color colorVal) colorValue          = colorVal;
+			else if (mValue is Color colorVal) {
+				if (isHdr) hdrColorValue = colorVal;
+				else colorValue          = colorVal;
+			}
 			else if (mValue is Vector4 vectorVal) vectorValue      = vectorVal;
 			else if (mValue is bool boolVal) boolValue             = boolVal;
 			else if (typeOverride == typeof(Texture) || typeOverride.IsSubclassOf(typeof(Texture))) textureValue = mValue as Texture;
@@ -94,6 +103,17 @@ namespace Unify.UnifiedRenderer {
 
 		public void UpdateMaterialID(int id) {
 			materialId = id;
+		}
+
+		public void EnableHDR(bool enabled = true) {
+			isHdr = enabled;
+
+			if (isHdr) {
+				hdrColorValue = colorValue;
+			}
+			else {
+				colorValue = hdrColorValue;
+			}
 		}
 
 		public bool Equals(MaterialPropertyData data) {

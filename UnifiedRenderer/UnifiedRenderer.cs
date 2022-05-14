@@ -126,6 +126,12 @@ namespace Unify.UnifiedRenderer {
 			return false;
 		}
 
+		public void EnableColorHDR(string identifier, int matIndex = -1, bool isEnabled = true) {
+			var propertyData = GetPropertyData(identifier, matIndex);
+
+			propertyData?.EnableHDR(isEnabled);
+		}
+
 		public bool ContainsIdenticalData(MaterialPropertyData newData) {
 			return materialProperties.Count(data => data == newData) > 1;
 		}
