@@ -10,7 +10,7 @@ namespace Unify.UnifiedRenderer {
 	[Serializable]
 	public class MaterialPropertyData {
 		#if UNITY_EDITOR
-		public static List<PropType> SupportedTypes = new() {
+		public static List<PropType> SupportedTypes = new List<PropType>() {
 			PropType.Color, PropType.Float, PropType.Range, PropType.Vector, PropType.Texture
 		};
 		#endif
@@ -44,7 +44,7 @@ namespace Unify.UnifiedRenderer {
 		public string GetNameForDisplay => $"{(UnifiedRenderer.UseDisplayPropertyName ? displayName : internalName)}";
 
 		public Type GetValueType =>
-			_valueType ??= Type.GetType(typeName) ?? Type.GetType(typeName + ", UnityEngine.CoreModule", true);
+			_valueType = _valueType ?? (Type.GetType(typeName) ?? Type.GetType(typeName + ", UnityEngine.CoreModule", true));
 
 		private Type _valueType = null;
 
@@ -79,8 +79,8 @@ namespace Unify.UnifiedRenderer {
 		public bool UpdateValue<T>(T mValue, Type typeOverride = null) {
 			//Manually converting int to float
 			if (mValue is int) typeOverride = typeof(float);
-			
-			typeOverride ??= mValue.GetType();
+
+			typeOverride = typeOverride ?? mValue.GetType(); 
 
 			typeName = typeOverride.FullName;
 

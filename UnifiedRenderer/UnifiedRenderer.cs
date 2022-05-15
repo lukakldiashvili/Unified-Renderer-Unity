@@ -35,9 +35,9 @@ namespace Unify.UnifiedRenderer {
 
 
 		[SerializeField]
-		private List<MaterialPropertyData> materialProperties = new();
+		private List<MaterialPropertyData> materialProperties = new List<MaterialPropertyData>();
 
-		private List<MaterialPropertyBlock> propertyBlocks = new();
+		private List<MaterialPropertyBlock> propertyBlocks = new List<MaterialPropertyBlock>();
 
 		
 		public List<MaterialPropertyData> GetMaterialProperties => materialProperties;
@@ -140,11 +140,11 @@ namespace Unify.UnifiedRenderer {
 		public bool TryGetPropertyValue<T> (string identifier, out T value, int matIndex = -1, bool autoGenerate = true) {
 			var propertyData = GetPropertyData(identifier, matIndex);
 
-			if (propertyData is null && autoGenerate) {
+			if (propertyData == null && autoGenerate) {
 				propertyData = AddProperty<T>(identifier, matIndex);
 			}
 
-			if (propertyData is not null && propertyData.GetValueType == typeof(T)) {
+			if (propertyData != null && propertyData.GetValueType == typeof(T)) {
 				value = (T) propertyData.GetValue;
 
 				return true;
@@ -248,13 +248,18 @@ namespace Unify.UnifiedRenderer {
 
 			matIndex = Mathf.Clamp(matIndex, 0, GetMaterialCount - 1);
 			Material targetMat = GetRenderer.sharedMaterials[matIndex];
-			
-			if (mValue      == typeof(int)) ret     = targetMat.GetInteger(identifier);
-			else if (mValue == typeof(float)) ret   = targetMat.GetFloat(identifier);
-			else if (mValue == typeof(Color)) ret   = targetMat.GetColor(identifier);
-			else if (mValue == typeof(Vector4)) ret = targetMat.GetVector(identifier);
-			else if (mValue == typeof(bool)) ret    = targetMat.GetInteger(identifier);
-			else if (mValue == typeof(Texture)) ret = targetMat.GetTexture(identifier);
+
+			if (mValue == typeof(int) || mValue == typeof(bool)) {
+				#if UNITY_2021_1_OR_NEWER
+				ret = targetMat.GetInteger(identifier);
+				#else
+				ret = targetMat.GetInt(identifier);
+				#endif
+			}
+			else if (mValue == typeof(float)) ret                    = targetMat.GetFloat(identifier);
+			else if (mValue == typeof(Color)) ret                    = targetMat.GetColor(identifier);
+			else if (mValue == typeof(Vector4)) ret                  = targetMat.GetVector(identifier);
+			else if (mValue == typeof(Texture)) ret                  = targetMat.GetTexture(identifier);
 
 			return (T) ret;
 		}
