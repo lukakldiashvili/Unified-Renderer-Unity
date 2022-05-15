@@ -48,14 +48,28 @@ namespace Unify.UnifiedRenderer {
 			ApplyPropertiesToBlock();
 		}
 
-		public bool AddProperty(string identifier, object value, int materialIndex = -1) {
-			if (GetPropertyData(identifier, materialIndex) != null) return false;
+		private void OnDestroy() {
+			DiscardAllProperties();
+		}
+		
+		public MaterialPropertyData AddProperty<T>(string identifier, int materialIndex = -1) {
+			if (GetPropertyData(identifier, materialIndex) != null) return null;
+			
+			var newProperty = new MaterialPropertyData(identifier,identifier, "unknown", materialIndex, ReadBaseValue<T>(identifier, materialIndex));
+			
+			materialProperties.Add(newProperty);
 
+			return newProperty;
+		}
+
+		public MaterialPropertyData AddProperty(string identifier, object value, int materialIndex = -1) {
+			if (GetPropertyData(identifier, materialIndex) != null) return null;
+			
 			var newProperty = new MaterialPropertyData(identifier,identifier, "unknown", materialIndex, value);
 			
 			materialProperties.Add(newProperty);
 
-			return true;
+			return newProperty;
 		}
 
 		public void RemoveProperty(string identifier, int materialIndex = -1) {
@@ -76,21 +90,30 @@ namespace Unify.UnifiedRenderer {
 			ClearPropertyBlocks();
 			ApplyPropertiesToBlock();
 		}
-		
-		public bool TrySetPropertyValue<T>(string identifier, T value, int materialIndex = -1,
-        		                                bool immediateApply = true) {
-        	try {
-        		var selectedProp = GetMaterialProperties.First(prop =>
-        			prop.GetInternalName == identifier && prop.GetMaterialID == materialIndex);
-        		
-        		var result = selectedProp.UpdateValue(value);
 
-        		if (immediateApply) ApplyPropertiesToBlock();
-        		return result;
-        	}
+		public bool HasProperty(string identifier, int materialIndex = -1) =>
+			GetPropertyData(identifier, materialIndex) != null;
+		
+		public bool TrySetPropertyValue<T>(string identifier, T value, int materialIndex = -1, bool autoGenerate = true) {
+			try {
+				var selectedProp = GetPropertyData(identifier, materialIndex);
+				
+				if (selectedProp == null && autoGenerate) { 
+					Debug.LogWarning($"Unified Renderer: Property with name '{identifier}' was not found on object '{gameObject}'. <b>Adding it automatically</b>", this);
+
+					selectedProp = AddProperty<T>(identifier, materialIndex);
+				}
+
+				var result = selectedProp.UpdateValue(value);
+
+				ApplyPropertiesToBlock();
+				return result;
+			}
         	catch (Exception e) {
-        		return false;
+	            Debug.LogError(e, gameObject);
         	}
+			
+			return false;
 		}
 		
 		/// <summary>
@@ -111,10 +134,15 @@ namespace Unify.UnifiedRenderer {
 		/// <param name="identifier"></param>
 		/// <param name="matIndex">Pass -1 to get global property.</param>
 		/// <param name="value"></param>
+		/// <param name="autoGenerate"></param>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public bool TryGetPropertyValue<T> (string identifier, out T value, int matIndex = -1) {
+		public bool TryGetPropertyValue<T> (string identifier, out T value, int matIndex = -1, bool autoGenerate = true) {
 			var propertyData = GetPropertyData(identifier, matIndex);
+
+			if (propertyData is null && autoGenerate) {
+				propertyData = AddProperty<T>(identifier, matIndex);
+			}
 
 			if (propertyData is not null && propertyData.GetValueType == typeof(T)) {
 				value = (T) propertyData.GetValue;
@@ -122,6 +150,8 @@ namespace Unify.UnifiedRenderer {
 				return true;
 			}
 
+			Debug.LogWarning($"Unified Renderer: Property with name '{identifier} and type {typeof(T)}", this);
+			
 			value = default;
 			return false;
 		}
@@ -187,7 +217,7 @@ namespace Unify.UnifiedRenderer {
 			if (valueType == typeof(float))
 				propertyBlocks[matIndex].SetFloat(internalName, propertyData.floatValue);
 			if (valueType == typeof(Color))
-				propertyBlocks[matIndex].SetColor(internalName, propertyData.colorValue);
+				propertyBlocks[matIndex].SetColor(internalName, propertyData.GetIsColorHDR ? propertyData.hdrColorValue : propertyData.colorValue);
 			if (valueType == typeof(Vector4))
 				propertyBlocks[matIndex].SetVector(internalName, propertyData.vectorValue);
 			if (valueType == typeof(Texture) || valueType.IsSubclassOf(typeof(Texture))) {
@@ -209,6 +239,24 @@ namespace Unify.UnifiedRenderer {
 			for (int matIndex = 0; matIndex < GetMaterialCount; matIndex++) {
 				GetRenderer.SetPropertyBlock(propertyBlocks[matIndex], matIndex);
 			}
+		}
+
+		private T ReadBaseValue<T>(string identifier, int matIndex = -1) {
+			var mValue = typeof(T);
+
+			object ret = default;
+
+			matIndex = Mathf.Clamp(matIndex, 0, GetMaterialCount - 1);
+			Material targetMat = GetRenderer.sharedMaterials[matIndex];
+			
+			if (mValue      == typeof(int)) ret     = targetMat.GetInteger(identifier);
+			else if (mValue == typeof(float)) ret   = targetMat.GetFloat(identifier);
+			else if (mValue == typeof(Color)) ret   = targetMat.GetColor(identifier);
+			else if (mValue == typeof(Vector4)) ret = targetMat.GetVector(identifier);
+			else if (mValue == typeof(bool)) ret    = targetMat.GetInteger(identifier);
+			else if (mValue == typeof(Texture)) ret = targetMat.GetTexture(identifier);
+
+			return (T) ret;
 		}
 
 		private MaterialPropertyData GetPropertyData(string identifier, int matIndex) {

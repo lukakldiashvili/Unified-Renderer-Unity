@@ -67,19 +67,21 @@ namespace Unify.UnifiedRenderer.Editor {
 			if (data.GetValueType == typeof(float))
 				EditorGUI.PropertyField(rect, property.FindPropertyRelative("floatValue"), fieldNameCont);
 			else if (data.GetValueType == typeof(Color)) {
-				var hdrRect = new Rect(rect) {
-					width = 50
-				};
+				if (!isMultiTarget) {
+					var hdrRect = new Rect(rect) {
+						width = 50
+					};
 
-				bool hdrValue = EditorGUI.ToggleLeft(hdrRect, new GUIContent("HDR"), data.GetIsColorHDR);
+					bool hdrValue = EditorGUI.ToggleLeft(hdrRect, new GUIContent("HDR"), data.GetIsColorHDR);
 
-				if (hdrValue != data.GetIsColorHDR) {
-					data.EnableHDR(hdrValue);
+					if (hdrValue != data.GetIsColorHDR) {
+						data.EnableHDR(hdrValue);
+					}
+				
+					rect.width -= 50;
+					rect.x     += 50;
 				}
-				
-				rect.width -= 50;
-				rect.x += 50;
-				
+
 				EditorGUI.PropertyField(rect,
 					data.GetIsColorHDR
 						? property.FindPropertyRelative("hdrColorValue")

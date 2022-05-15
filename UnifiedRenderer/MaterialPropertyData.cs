@@ -117,6 +117,8 @@ namespace Unify.UnifiedRenderer {
 		}
 
 		public bool Equals(MaterialPropertyData data) {
+			if (data == null) return false;
+			
 			return (data.internalName == internalName && data.materialName == materialName) && data.materialId == materialId;
 		}
 
