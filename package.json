@@ -2,7 +2,7 @@
     "name": "com.lukakldiashvili.unified-renderer",
     "displayName": "Unified Renderer",
     "description": "Unified Renderer is simple drop-in plugin for Unity, which simplifies working with renderers and materials. Allowing you to change material properties per-object right from the editor or code.",
-    "version": "2.3.0",
+    "version": "3.0.0",
     "unity": "2019.1",
     "license": "MIT",
     "repository": {
