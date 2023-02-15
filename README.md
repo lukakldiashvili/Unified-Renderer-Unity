@@ -22,7 +22,6 @@ Simply add the following git url in package manager (please read further notes):
 
 - SRP independent, works with all render pipelines.
 - Set/Get property values per renderer
-- Option to display renderer's and mesh filter's inspectors in one place, unified renderer component and hide others' contents
 - Per-material or per-renderer (global for renderer) properties
 
 ## Examples
