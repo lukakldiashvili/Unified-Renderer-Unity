@@ -2,14 +2,15 @@
 
 <b>Stop creating new materials just to change color of the objects, modify them right from the component!</b>
 
-<p align="center">
-  <img width="700" align="center" alt="demo" src="https://user-images.githubusercontent.com/42884387/219176026-5a5546ab-feca-4dfc-9b68-77acdecebc74.gif">
-</p>
-
 ## Unified Renderer
 
 Unified Renderer is simple plugin for Unity, that allows to assign material properties right from object (instead of material).<br><br>
 Unified Renderer is based on Unity's 'MaterialPropertyBlock' class, that allows to pass different data to each Renderer/object.<br><br>
+
+<p align="center">
+  <img width="700" align="center" alt="demo" src="https://user-images.githubusercontent.com/42884387/219176026-5a5546ab-feca-4dfc-9b68-77acdecebc74.gif">
+</p>
+
 
 ## How to install
 Simply add the following git url in package manager (please read further notes):<br>
