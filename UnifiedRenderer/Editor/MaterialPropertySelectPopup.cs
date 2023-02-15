@@ -80,11 +80,12 @@ namespace Unify.UnifiedRenderer.Editor {
 		}
 
 		public override void OnClose() {
-			FinishReference();
+			FinishReference(true);
 		}
 
-		void FinishReference() {
-			if (_setupComplete) {
+		void FinishReference(bool wasForced = false) {
+			// if already complete or forced to close, return
+			if (_setupComplete || wasForced) {
 				return;
 			}
 
